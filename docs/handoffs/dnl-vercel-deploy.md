@@ -49,9 +49,31 @@ Neon**, not the box:
      `limit` to ~15 there.
    - For the first bulk backfill, run `image_graphic_check.mjs 2000` once against Neon; the cron keeps up after.
 
+## Neon schema checklist (COMPLETE — from a full scan of every SQL query in the app)
+Miss any of these and the affected page 500s. The homepage worked but article pages crashed precisely
+because **`public.sources` was not replicated** (only the article page joins it).
+
+**A. REPLICATE from the box (read-only reader/CMS tables — logical replication):**
+- `analytics.story_clusters_v8`
+- `analytics.story_generated_v8`
+- `analytics.story_facts_v8`
+- `analytics.story_cluster_members_v8`
+- `public.articles`
+- `public.sources`   ← the one that was missed (detail.ts joins it for image attribution)
+
+**B. NATIVE + WRITABLE on Neon (DNL owns these — create, do NOT replicate):**
+- `auth.users`  (login: signup writes, signin reads)  — run the auth-schema migration; provision the admin.
+- `rigwire.editorial_overrides`, `rigwire.editorial_audit`, `rigwire.manual_stories`,
+  `rigwire.ranking_weights`, `rigwire.image_checks`  (migrations 002/003/004)
+- `rigwire.user_preferences`  (reader prefs / onboarding writes)
+- `rigwire.onboarding_seed_articles`  (onboarding page reads it — seed it, or onboarding 500s)
+
+`reader_ro` needs SELECT on group A **and** `rigwire.image_checks` (the reader joins it). `cms_rw` needs
+write on all of group B.
+
 ## Deploy steps
-1. Neon: create project (eu-central-1), DB `dnl`, roles `reader_ro`/`cms_rw`; set up logical replication
-   from the box for the reader tables; create `rigwire.*` schema natively (run migrations 002/003/004).
+1. Neon: create project (eu-central-1), DB `dnl`, roles `reader_ro`/`cms_rw`; replicate **every table in
+   group A above** from the box; create **every table in group B** natively (migrations + auth schema).
 2. `vercel` → new project from this repo, region `fra1`, set env vars above.
 3. First deploy to a preview URL. Smoke test: `/long-read` renders with data; an article opens; `/studio`
    loads for an editor; `/` and `/minute` redirect to `/long-read`.
