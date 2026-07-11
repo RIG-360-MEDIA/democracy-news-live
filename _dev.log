@@ -1,0 +1,121 @@
+
+> rig-news@0.1.0 dev
+> next dev
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\Dell\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Users\Dell\Desktop\rig-news\package-lock.json
+
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3000
+   - Network:      http://100.109.85.70:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 815ms (234 modules)
+ ○ Compiling /long-read ...
+ ✓ Compiled /long-read in 6.7s (1338 modules)
+ ✓ Compiled in 2.1s (608 modules)
+ GET /long-read 200 in 8867ms
+ ✓ Compiled in 242ms (594 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3.5s (1412 modules)
+ ✓ Compiled in 2.1s (640 modules)
+ GET / 200 in 5674ms
+ ○ Compiling /signin ...
+ ✓ Compiled /signin in 6.2s (1713 modules)
+ GET /signin 200 in 8227ms
+ GET /signin 200 in 271ms
+[31m[auth][error][0m CallbackRouteError: Read more at https://errors.authjs.dev#callbackrouteerror
+[31m[auth][cause][0m: AggregateError: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1714:7)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+    at cachedError (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/index.js:112:11)
+    at Object.authorize (webpack-internal:///(action-browser)/./src/lib/auth/config.ts:61:80)
+[31m[auth][details][0m: {
+  "provider": "credentials"
+}
+ POST /signin 200 in 869ms
+[31m[auth][error][0m CallbackRouteError: Read more at https://errors.authjs.dev#callbackrouteerror
+[31m[auth][cause][0m: AggregateError: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1714:7)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+    at cachedError (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/index.js:112:11)
+    at Object.authorize (webpack-internal:///(action-browser)/./src/lib/auth/config.ts:61:80)
+[31m[auth][details][0m: {
+  "provider": "credentials"
+}
+ POST /signin 200 in 95ms
+[31m[auth][error][0m CallbackRouteError: Read more at https://errors.authjs.dev#callbackrouteerror
+[31m[auth][cause][0m: AggregateError: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1714:7)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+    at cachedError (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/index.js:112:11)
+    at Object.authorize (webpack-internal:///(action-browser)/./src/lib/auth/config.ts:61:80)
+[31m[auth][details][0m: {
+  "provider": "credentials"
+}
+ POST /signin 200 in 99ms
+[31m[auth][error][0m CallbackRouteError: Read more at https://errors.authjs.dev#callbackrouteerror
+[31m[auth][cause][0m: AggregateError: 
+    at internalConnectMultiple (node:net:1139:18)
+    at afterConnectMultiple (node:net:1714:7)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17)
+    at cachedError (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:170:23)
+    at new Query (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/query.js:36:24)
+    at sql (file:///C:/Users/Dell/Desktop/rig-news/node_modules/postgres/src/index.js:112:11)
+    at Object.authorize (webpack-internal:///(action-browser)/./src/lib/auth/config.ts:61:80)
+[31m[auth][details][0m: {
+  "provider": "credentials"
+}
+ POST /signin 200 in 81ms
+ ○ Compiling /today ...
+ ✓ Compiled /today in 3.1s (1707 modules)
+ GET /today 200 in 7516ms
+ ○ Compiling /long-read ...
+ ✓ Compiled /long-read in 2s (1085 modules)
+ GET /long-read 200 in 2847ms
+ GET /long-read 200 in 481ms
+ ○ Compiling /long-read/[slug] ...
+ ✓ Compiled /long-read/[slug] in 2.3s (1734 modules)
+ GET /long-read/slow-death-of-local-news 200 in 4886ms
+ GET /long-read 200 in 508ms
+ GET /long-read 200 in 2463ms
+ ○ Compiling /all-sides ...
+ ✓ Compiled /all-sides in 2.5s (1744 modules)
+ GET /all-sides 200 in 2779ms
+ GET /long-read 200 in 466ms
+ GET /all-sides 200 in 41ms
+ ○ Compiling /queue ...
+ ✓ Compiled /queue in 7.3s (1718 modules)
+ GET /queue 200 in 7945ms
+ ○ Compiling /long-view ...
+ ✓ Compiled /long-view in 3.9s (1446 modules)
+ GET /long-view 200 in 4571ms
+ GET /long-read 200 in 199ms
+ GET /long-view 200 in 221ms
+ GET /long-read 200 in 286ms
+ ✓ Compiled in 2.2s (658 modules)
+ ✓ Compiled in 801ms (658 modules)
+ GET /long-read 200 in 194ms
+ GET /long-read 200 in 124ms
+ ✓ Compiled in 981ms (658 modules)
+ ✓ Compiled in 880ms (658 modules)
+ GET /long-read 200 in 290ms
+ ✓ Compiled in 7s (1436 modules)
+ GET /long-read 200 in 5761ms
+ GET /long-read 200 in 97ms

@@ -1,0 +1,23 @@
+[transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128000. This may result in unexpected behavior.
+[transformers] Model config: audio_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: audio_eos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128003. This may result in unexpected behavior.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|##########| 2/2 [00:00<00:00, 2359.66it/s]
+Loading weights:   0%|          | 0/538 [00:00<?, ?it/s]Loading weights:   0%|          | 1/538 [00:00<02:04,  4.32it/s]Loading weights:   2%|2         | 13/538 [00:00<00:11, 47.60it/s]Loading weights:   6%|5         | 30/538 [00:00<00:05, 86.55it/s]Loading weights:   8%|7         | 43/538 [00:00<00:04, 100.28it/s]Loading weights:  11%|#         | 58/538 [00:00<00:04, 113.80it/s]Loading weights:  14%|#3        | 75/538 [00:00<00:03, 127.80it/s]Loading weights:  17%|#6        | 90/538 [00:00<00:03, 132.55it/s]Loading weights:  19%|#9        | 104/538 [00:00<00:03, 129.88it/s]Loading weights:  22%|##2       | 120/538 [00:01<00:03, 138.19it/s]Loading weights:  25%|##5       | 135/538 [00:01<00:02, 139.80it/s]Loading weights:  40%|###9      | 215/538 [00:01<00:00, 331.86it/s]Loading weights:  92%|#########2| 497/538 [00:01<00:00, 899.84it/s]Loading weights: 100%|##########| 538/538 [00:01<00:00, 273.87it/s]
+turn 1 spk 0 done 5.8 s
+turn 2 spk 1 done 3.2 s
+turn 3 spk 2 done 8.3 s
+turn 4 spk 0 done 2.6 s
+turn 5 spk 1 done 4.6 s
+turn 6 spk 2 done 3.9 s
+turn 7 spk 0 done 2.6 s
+turn 8 spk 1 done 6.0 s
+turn 9 spk 2 done 1.4 s
+turn 10 spk 0 done 6.1 s
+turn 11 spk 1 done 3.5 s
+turn 12 spk 2 done 6.8 s
+turn 13 spk 0 done 4.2 s
+turn 14 spk 1 done 4.0 s
+turn 15 spk 2 done 2.2 s
+turn 16 spk 0 done 7.7 s
+WROTE episode_3guys.wav 73.6 sec

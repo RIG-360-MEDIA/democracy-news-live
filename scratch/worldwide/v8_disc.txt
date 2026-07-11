@@ -1,0 +1,449 @@
+=== _v8 RE-CONFIRM  run=1781406460  tables=analytics.story_clusters_v8/analytics.story_cluster_members_v8/analytics.story_edges_v8 ===
+clusters >=100: 100
+
+=== RE-DERIVED PARAMS (from _v8, not hardcoded) ===
+  hub/core DF histogram: 1-3:0  4-9:0  10-24:1  25-49:3  50-99:5  100+:41
+  GENERIC_DF_MIN -> 54   [hub-DF valley 42->65 (no clean ratio gap, max 2.1x); cutoff = mid]
+  THETA          -> 0.195   [gap [0.186,0.204] width 0.018]
+  jaccard near boundary (0.13, 0.17): 14 clusters -> MUDDY (LLM band)
+
+=== RE-CONFIRM structural params ===
+  HUB_UBIQ_FRAC=0.8: 50/100 clusters have a hub at >=0.8 ubiquity (OK)
+  MIN_SUBS=4: 11 few-sub clusters (jaccard treated unstable); shared_core distribution of few-sub = [1, 2, 2, 2, 3, 3, 3, 4, 4, 9, 10]
+  SHARED_CORE_KEEP=4: shared_core where j>=THETA (lean keep) median=3 vs j<THETA (lean split) median=1 (separates)
+  SPORTS_BAND=(0.1, 0.16): sports-cluster jaccards = [0.091, 0.186] (0/2 in band)
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6qb53recp9q069tanhj21c` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99716, Requested 977. Please try again in 9m58.752s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[11] (groq/key[3]) cooled for 15s. 55/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q77f8e5esdyn9hf8hztgp` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99865, Requested 959. Please try again in 11m51.936s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[9] (groq/key[1]) cooled for 15s. 54/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q5054fzv8wpthcxxn0eq9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99711, Requested 4687. Please try again in 1h3m19.872s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[8] (groq/key[0]) cooled for 15s. 53/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q941neaavg4v5ecv73qkx` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99892, Requested 4863. Please try again in 1h8m28.32s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[10] (groq/key[2]) cooled for 15s. 52/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6ps87effc8q5a67benycw1` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99784, Requested 4687. Please try again in 1h4m22.944s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[16] (groq/key[8]) cooled for 15s. 51/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kef93gkkf8wbz64kqtb51dt9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99832, Requested 4911. Please try again in 1h8m17.952s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[18] (groq/key[10]) cooled for 15s. 50/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh4535s3e04tx7vtn9cf9rjd` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99710, Requested 921. Please try again in 9m5.183999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[20] (groq/key[12]) cooled for 15s. 49/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjg1rkz6e57vtbcwr2w53q0q` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99852, Requested 4911. Please try again in 1h8m35.232s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[22] (groq/key[14]) cooled for 15s. 48/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh73fxmtfycsmkbraf7tcmqf` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99699, Requested 4863. Please try again in 1h5m41.568s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[24] (groq/key[16]) cooled for 15s. 47/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01khr3yad5eper9ab71p1w1g4z` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99898, Requested 4897. Please try again in 1h9m2.88s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[26] (groq/key[18]) cooled for 15s. 46/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqaannqhez5anq9g9sj6xgmt` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99682, Requested 744. Please try again in 6m8.063999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[28] (groq/key[20]) cooled for 15s. 45/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[30] (cerebras/key[1]) cooled for 15s. 44/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[32] (cerebras/key[3]) cooled for 15s. 43/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[34] (cerebras/key[5]) cooled for 15s. 42/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[36] (cerebras/key[7]) cooled for 15s. 41/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[38] (cerebras/key[9]) cooled for 15s. 40/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[40] (cerebras/key[11]) cooled for 15s. 39/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[43] (cerebras/key[14]) cooled for 15s. 38/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[45] (cerebras/key[16]) cooled for 15s. 37/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[47] (cerebras/key[18]) cooled for 15s. 36/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[49] (cerebras/key[20]) cooled for 15s. 35/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[51] (cerebras/key[22]) cooled for 15s. 34/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[53] (cerebras/key[24]) cooled for 15s. 33/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[55] (cerebras/key[26]) cooled for 15s. 32/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6qcn1xfe387s36v4y24z5a` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99265, Requested 4911. Please try again in 1h0m8.064s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[12] (groq/key[4]) cooled for 15s. 31/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q5ycdf19amh792gjrmcrd` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99746, Requested 4863. Please try again in 1h6m22.176s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[14] (groq/key[6]) cooled for 15s. 30/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kj54mqt6eg9rcjynpr649pks` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99825, Requested 4911. Please try again in 1h8m11.904s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[17] (groq/key[9]) cooled for 15s. 29/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh84akdmenp86zy0h3sqdjyq` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99926, Requested 4687. Please try again in 1h6m25.631999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[21] (groq/key[13]) cooled for 15s. 28/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh5e5z04f1g8755vs54qvx52` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99637, Requested 4911. Please try again in 1h5m29.471999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[25] (groq/key[17]) cooled for 15s. 27/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[29] (cerebras/key[0]) cooled for 15s. 26/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[33] (cerebras/key[4]) cooled for 15s. 25/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[37] (cerebras/key[8]) cooled for 15s. 24/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[41] (cerebras/key[12]) cooled for 15s. 23/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[46] (cerebras/key[17]) cooled for 15s. 22/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[50] (cerebras/key[21]) cooled for 15s. 21/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[54] (cerebras/key[25]) cooled for 15s. 20/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q1zxhfkrsn33j9ra01k0c` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99564, Requested 4487. Please try again in 58m20.064s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[13] (groq/key[5]) cooled for 15s. 19/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01k3184xnafdxbx1k72rm7em8x` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99487, Requested 4687. Please try again in 1h0m6.336s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[19] (groq/key[11]) cooled for 15s. 18/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh7an7shf4jrmfgthxvz9w6e` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99546, Requested 4911. Please try again in 1h4m10.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[27] (groq/key[19]) cooled for 15s. 17/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[35] (cerebras/key[6]) cooled for 15s. 16/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[42] (cerebras/key[13]) cooled for 15s. 15/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[48] (cerebras/key[19]) cooled for 15s. 14/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q8frqe8v9h1kk4229p74d` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99689, Requested 4487. Please try again in 1h0m8.064s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[15] (groq/key[7]) cooled for 15s. 13/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[31] (cerebras/key[2]) cooled for 15s. 12/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[44] (cerebras/key[15]) cooled for 15s. 11/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjg1tkzjeazbv28gr0q3bt6q` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99632, Requested 4739. Please try again in 1h2m56.544s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[23] (groq/key[15]) cooled for 15s. 10/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[52] (cerebras/key[23]) cooled for 15s. 9/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[39] (cerebras/key[10]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6qb53recp9q069tanhj21c` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99702, Requested 4487. Please try again in 1h0m19.296s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[11] (groq/key[3]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q77f8e5esdyn9hf8hztgp` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99851, Requested 4911. Please try again in 1h8m34.368s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[9] (groq/key[1]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q5054fzv8wpthcxxn0eq9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99697, Requested 4739. Please try again in 1h3m52.703999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[8] (groq/key[0]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q941neaavg4v5ecv73qkx` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99878, Requested 691. Please try again in 8m11.616s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[10] (groq/key[2]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6ps87effc8q5a67benycw1` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99770, Requested 4487. Please try again in 1h1m18.048s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[16] (groq/key[8]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kef93gkkf8wbz64kqtb51dt9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99817, Requested 4911. Please try again in 1h8m4.992s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[18] (groq/key[10]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh4535s3e04tx7vtn9cf9rjd` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99695, Requested 4739. Please try again in 1h3m50.975999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[20] (groq/key[12]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjg1rkz6e57vtbcwr2w53q0q` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99838, Requested 4687. Please try again in 1h5m9.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[22] (groq/key[14]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh73fxmtfycsmkbraf7tcmqf` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99685, Requested 4911. Please try again in 1h6m10.944s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[24] (groq/key[16]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01khr3yad5eper9ab71p1w1g4z` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99884, Requested 4487. Please try again in 1h2m56.544s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[26] (groq/key[18]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqaannqhez5anq9g9sj6xgmt` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99667, Requested 4739. Please try again in 1h3m26.784s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[28] (groq/key[20]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[30] (cerebras/key[1]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[32] (cerebras/key[3]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[34] (cerebras/key[5]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[36] (cerebras/key[7]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[38] (cerebras/key[9]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[40] (cerebras/key[11]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[43] (cerebras/key[14]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[45] (cerebras/key[16]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[47] (cerebras/key[18]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[49] (cerebras/key[20]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[51] (cerebras/key[22]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[53] (cerebras/key[24]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[55] (cerebras/key[26]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kk6qcn1xfe387s36v4y24z5a` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499702, Requested 916. Please try again in 1m46.790399999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[12] (groq/key[4]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q5ycdf19amh792gjrmcrd` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99731, Requested 798. Please try again in 7m37.056s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[14] (groq/key[6]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kj54mqt6eg9rcjynpr649pks` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499964, Requested 916. Please try again in 2m32.064s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[17] (groq/key[9]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh84akdmenp86zy0h3sqdjyq` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99911, Requested 4648. Please try again in 1h5m38.975999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[21] (groq/key[13]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kh5e5z04f1g8755vs54qvx52` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499692, Requested 914. Please try again in 1m44.716799999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[25] (groq/key[17]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[29] (cerebras/key[0]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[33] (cerebras/key[4]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[33] (cerebras/key[4]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[37] (cerebras/key[8]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[41] (cerebras/key[12]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[46] (cerebras/key[17]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[50] (cerebras/key[21]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[54] (cerebras/key[25]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q1zxhfkrsn33j9ra01k0c` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99549, Requested 4648. Please try again in 1h0m26.208s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[13] (groq/key[5]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01k3184xnafdxbx1k72rm7em8x` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499488, Requested 4911. Please try again in 12m40.1472s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[19] (groq/key[11]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh7an7shf4jrmfgthxvz9w6e` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99531, Requested 4648. Please try again in 1h0m10.656s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[27] (groq/key[19]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[35] (cerebras/key[6]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[42] (cerebras/key[13]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[48] (cerebras/key[19]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q8frqe8v9h1kk4229p74d` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99673, Requested 4648. Please try again in 1h2m13.344s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[15] (groq/key[7]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[31] (cerebras/key[2]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[44] (cerebras/key[15]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjg1tkzjeazbv28gr0q3bt6q` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99617, Requested 4539. Please try again in 59m50.784s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[23] (groq/key[15]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[52] (cerebras/key[23]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[39] (cerebras/key[10]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6qb53recp9q069tanhj21c` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99687, Requested 714. Please try again in 5m46.464s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[11] (groq/key[3]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q77f8e5esdyn9hf8hztgp` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99835, Requested 490. Please try again in 4m40.8s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[9] (groq/key[1]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q5054fzv8wpthcxxn0eq9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99681, Requested 4648. Please try again in 1h2m20.256s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[8] (groq/key[0]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6q941neaavg4v5ecv73qkx` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99862, Requested 4539. Please try again in 1h3m22.464s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[10] (groq/key[2]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kk6ps87effc8q5a67benycw1` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99754, Requested 4648. Please try again in 1h3m23.327999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[16] (groq/key[8]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kef93gkkf8wbz64kqtb51dt9` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99802, Requested 477. Please try again in 4m1.055999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[18] (groq/key[10]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh4535s3e04tx7vtn9cf9rjd` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99680, Requested 4539. Please try again in 1h0m45.216s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[20] (groq/key[12]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjg1rkz6e57vtbcwr2w53q0q` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99822, Requested 4648. Please try again in 1h4m22.08s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[22] (groq/key[14]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kh73fxmtfycsmkbraf7tcmqf` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99669, Requested 607. Please try again in 3m58.464s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[24] (groq/key[16]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01khr3yad5eper9ab71p1w1g4z` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99868, Requested 4648. Please try again in 1h5m1.824s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[26] (groq/key[18]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqaannqhez5anq9g9sj6xgmt` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99652, Requested 4539. Please try again in 1h0m21.024s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[28] (groq/key[20]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[30] (cerebras/key[1]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[32] (cerebras/key[3]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[34] (cerebras/key[5]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[36] (cerebras/key[7]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[38] (cerebras/key[9]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[40] (cerebras/key[11]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[43] (cerebras/key[14]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[45] (cerebras/key[16]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[47] (cerebras/key[18]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[49] (cerebras/key[20]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[51] (cerebras/key[22]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[53] (cerebras/key[24]) cooled for 15s. 8/56 slots remaining.
+Cerebras 429 [RPM] body={"message":"Requests per minute limit exceeded - too many requests sent.","type":"too_many_requests_error","param":"quota","code":"request_quota_exceeded"}
+UnifiedPool slot[55] (cerebras/key[26]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kk6qcn1xfe387s36v4y24z5a` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499624, Requested 692. Please try again in 54.6048s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[12] (groq/key[4]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kk6q5ycdf19amh792gjrmcrd` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499689, Requested 4539. Please try again in 12m10.5984s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[14] (groq/key[6]) cooled for 15s. 8/56 slots remaining.
+UnifiedPool/groq 429 [status=429] body={"error":{"message":"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01kj54mqt6eg9rcjynpr649pks` service tier `on_demand` on tokens per day (TPD): Limit 500000, Used 499888, Requested 544. Please try again in 1m14.6496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+UnifiedPool slot[17] (groq/key[9]) cooled for 15s. 8/56 slots remaining.
+
+=== CLASSIFICATION (n=100) ===
+rule: KEEP=43 SPLIT=47 LLM-deferred=10 (10.0%)
+by-reason: {'demote-boundary': 10, 'jaccard-primary': 61, 'bridge-demote': 16, 'few-subs-rescue': 11, 'no-split-coherent': 2}
+FINAL after LLM: KEEP=45 SPLIT=55 unresolved=0
+
+sid	arts	S	sc	jaccard	hub	hub_df	CLASS	reason
+00fe0b2a	109	2	10	0.0	-	0	KEEP	few-subs-rescue
+44481b8f	272	7	0	0.044	-	0	SPLIT	jaccard-primary
+4b382ff4	929	35	0	0.052	-	0	SPLIT	jaccard-primary
+db5280ad	363	20	0	0.053	-	0	SPLIT	jaccard-primary
+6fda268c	127	4	1	0.056	-	0	SPLIT	bridge-demote
+2e74cc38	109	4	3	0.06	-	0	SPLIT	bridge-demote
+632b7160	196	12	0	0.07	-	0	SPLIT	jaccard-primary
+572bd73f	211	10	1	0.074	-	0	SPLIT	bridge-demote
+ca9e8a82	103	6	1	0.075	-	0	SPLIT	bridge-demote
+754d9e28	482	23	0	0.076	-	0	SPLIT	jaccard-primary
+83c34c72	504	22	0	0.079	-	0	SPLIT	jaccard-primary
+0b1c2d16	229	9	0	0.082	-	0	SPLIT	jaccard-primary
+f367c1a6	266	11	0	0.083	-	0	SPLIT	jaccard-primary
+09768d7c	105	3	2	0.083	-	0	SPLIT	few-subs-rescue
+73fd59df	234	12	0	0.087	-	0	SPLIT	jaccard-primary
+502563df	176	8	1	0.09	-	0	SPLIT	bridge-demote
+cef2347f	616	26	0	0.091	-	0	SPLIT	jaccard-primary
+0684508c	298	13	0	0.091	-	0	SPLIT	jaccard-primary
+0ee8558d	258	11	1	0.091	-	0	SPLIT	bridge-demote
+125acf36	626	27	1	0.092	-	0	SPLIT	bridge-demote
+77bf7fed	256	11	0	0.092	-	0	SPLIT	jaccard-primary
+8b0c64d2	366	22	2	0.095	-	0	SPLIT	bridge-demote
+c2493b85	1540	40	1	0.097	-	0	SPLIT	bridge-demote
+9abc7030	465	17	1	0.097	-	0	SPLIT	bridge-demote
+947e9943	220	10	1	0.1	-	0	SPLIT	bridge-demote
+6299d767	166	10	2	0.104	-	0	SPLIT	bridge-demote
+0d6c8848	717	36	2	0.108	-	0	SPLIT	bridge-demote
+329b5a64	289	13	1	0.111	-	0	SPLIT	bridge-demote
+146f9785	153	5	1	0.111	Qatar	433	SPLIT	bridge-demote
+5471a49b	121	2	9	0.111	Kenya	445	KEEP	few-subs-rescue
+884802b0	116	3	1	0.111	Donald Trump	1777	SPLIT	few-subs-rescue
+069b64a1	130	3	3	0.12	-	0	SPLIT	few-subs-rescue
+8061ff42	189	6	4	0.123	-	0	SPLIT	bridge-demote
+5eb9ecf2	134	4	3	0.139	-	0	LLM	demote-boundary
+2c26faf1	187	8	3	0.142	-	0	LLM	demote-boundary
+57c47ad4	663	21	1	0.143	-	0	LLM	demote-boundary
+63c8a09c	223	11	1	0.145	Jeffrey Epstein	90	LLM	demote-boundary
+5ebb6107	2377	31	1	0.149	Iran	3340	LLM	demote-boundary
+519c6dc9	213	8	3	0.15	-	0	LLM	demote-boundary
+a05bb1ab	111	5	3	0.151	-	0	SPLIT	jaccard-primary
+9dcd06dd	229	14	2	0.157	-	0	SPLIT	jaccard-primary
+3ce50489	110	3	2	0.157	Donald J. Trump	829	SPLIT	few-subs-rescue
+30d5cc65	100	3	2	0.157	Nifty	238	SPLIT	few-subs-rescue
+0f485bea	784	23	2	0.158	-	0	LLM	demote-boundary
+e9e70daa	226	6	3	0.163	-	0	LLM	demote-boundary
+518d9448	265	16	2	0.164	Japan	1056	LLM	demote-boundary
+06739373	470	21	1	0.167	Narendra Modi	1111	LLM	demote-boundary
+a3033a97	233	11	2	0.171	-	0	SPLIT	jaccard-primary
+72117aa3	321	12	2	0.174	-	0	SPLIT	jaccard-primary
+c4ef4f92	408	18	2	0.175	Vietnam	491	SPLIT	jaccard-primary
+0ba6d48e	275	13	2	0.179	-	0	SPLIT	jaccard-primary
+531fb3e2	164	9	1	0.179	Pakistan	1459	SPLIT	jaccard-primary
+5b108b95	258	7	1	0.181	Ukraine	1280	SPLIT	jaccard-primary
+2bcd6bbb	507	19	2	0.182	England	702	SPLIT	jaccard-primary
+1c827b93	234	10	3	0.184	Apple Inc.	259	SPLIT	jaccard-primary
+3295ff07	126	4	4	0.185	-	0	SPLIT	jaccard-primary
+5b88ce82	1828	38	2	0.186	-	0	SPLIT	jaccard-primary
+3ce5c056	159	3	3	0.204	Brazil	359	SPLIT	few-subs-rescue
+b944ed7d	405	20	1	0.208	MV Hondius	33	KEEP	jaccard-primary
+f6c7f000	158	5	3	0.208	Tamilaga Vettri Kazhag	354	KEEP	jaccard-primary
+cb79b3e2	604	16	2	0.216	Keir Starmer	303	KEEP	jaccard-primary
+b7c66518	215	9	2	0.22	Vladimir Putin	428	KEEP	jaccard-primary
+8a64d24c	161	6	4	0.221	Rajya Sabha	334	KEEP	jaccard-primary
+f35dc56e	206	6	3	0.222	Maine	65	KEEP	jaccard-primary
+d8e4b40c	550	18	2	0.224	United States	1412	KEEP	jaccard-primary
+2bc19b56	1484	29	2	0.225	Iran	3340	KEEP	jaccard-primary
+72fb8c0b	172	7	3	0.226	-	0	KEEP	jaccard-primary
+83582714	402	17	2	0.233	Central Board of Secon	473	KEEP	jaccard-primary
+bf6ec0fc	1345	23	1	0.237	Iran	3340	KEEP	jaccard-primary
+b51dd833	185	7	4	0.246	-	0	KEEP	jaccard-primary
+6f16edba	139	4	2	0.25	Northern Ireland	70	KEEP	jaccard-primary
+fd82ea54	178	9	3	0.251	-	0	KEEP	jaccard-primary
+c7b0d196	747	26	4	0.258	Democratic Republic of	185	KEEP	jaccard-primary
+7b3fbb67	162	8	2	0.263	Nvidia	186	KEEP	jaccard-primary
+edea12ff	255	9	3	0.265	Israel	1733	KEEP	jaccard-primary
+89428db6	304	12	3	0.269	Israel	1733	KEEP	jaccard-primary
+5062a85f	458	19	2	0.275	Elon Musk	187	KEEP	jaccard-primary
+9f03d8de	251	7	3	0.288	Donald Trump	1777	KEEP	jaccard-primary
+24492a83	124	5	3	0.294	Paris	336	KEEP	jaccard-primary
+b0867f68	458	19	4	0.296	-	0	KEEP	jaccard-primary
+7caf0b60	127	4	7	0.296	Aryna Sabalenka	42	KEEP	jaccard-primary
+4de9e318	118	3	4	0.296	Bharatiya Janata Party	1603	KEEP	few-subs-rescue
+193f8b8e	1793	26	4	0.308	Israel	1733	KEEP	jaccard-primary
+f76b78a3	116	4	5	0.316	Malviya Nagar	146	KEEP	jaccard-primary
+4d6a2590	196	8	3	0.325	Norway	191	KEEP	jaccard-primary
+4d4c1748	162	5	6	0.331	Marta Kostyuk	27	KEEP	jaccard-primary
+53061d15	242	9	4	0.334	-	0	KEEP	jaccard-primary
+3bb6400f	151	7	2	0.344	Patna	153	KEEP	jaccard-primary
+f61ffc28	335	10	4	0.35	India	2627	KEEP	jaccard-primary
+37b5c988	2286	36	3	0.351	Iran	3340	KEEP	jaccard-primary
+ec30a0e5	1115	25	3	0.354	Moscow	845	KEEP	jaccard-primary
+f616ce51	173	6	5	0.387	Pope Leo XIV	76	KEEP	jaccard-primary
+cd17c727	807	28	3	0.398	Tamilaga Vettri Kazhag	354	KEEP	jaccard-primary
+894fe161	166	7	5	0.414	Twisha Sharma	69	KEEP	jaccard-primary
+6cc86f71	122	3	3	0.429	Paris	336	SPLIT	few-subs-rescue
+048c9641	509	24	4	0.469	Karnataka	1142	KEEP	jaccard-primary
+0f318338	265	10	6	0.499	Bharatiya Janata Party	1603	KEEP	jaccard-primary
+544a16c4	111	3	4	0.667	Hukam Singh Phogat	13	KEEP	few-subs-rescue
+604abbed	123	0	0	None	-	0	KEEP	no-split-coherent
+560be4a2	104	0	0	None	-	0	KEEP	no-split-coherent
+
+=== LLM VERDICTS (10 deferred) ===
+[5ebb6107] arts=2377 hub=Iran(df3340) j=0.149 demote-boundary | rep: Next to hike prices by up to 8% outside Europe due to Iran war costs
+   LLM-> KEEP | KEEP | Global market reactions to Iran war/peace news
+[0f485bea] arts=784 hub=-(df0) j=0.158 demote-boundary | rep: Soaring High: How flight and revs helped Manav Suthar dominate on Indi
+   LLM-> KEEP | KEEP | Same India vs Afghanistan series matches
+[57c47ad4] arts=663 hub=-(df0) j=0.143 demote-boundary | rep: Prominent TMC leaders trailing; celebrations start at BJP office in Ko
+   LLM-> SPLIT | SPLIT | Different states and elections; Assam, Kerala, West Bengal.
+[06739373] arts=470 hub=Narendra Modi(df1111) j=0.167 demote-boundary | rep: Commitment to democracy makes India, Nordic nations natural partners: 
+   LLM-> SPLIT | SPLIT | Domestic politics vs foreign visit vs record milestone
+[518d9448] arts=265 hub=Japan(df1056) j=0.164 demote-boundary | rep: 奈良の「飛鳥・藤原の宮都」世界文化遺産に登録される見通しに
+   LLM-> SPLIT | SPLIT | Unrelated topics: weather, war, crime, politics, entertainment.
+[e9e70daa] arts=226 hub=-(df0) j=0.163 demote-boundary | rep: Trump says no escalation expected with Cuba after Castro indictment
+   LLM-> SPLIT | SPLIT | Brazil/Lula topics unrelated to Cuba/Trump conflict
+[63c8a09c] arts=223 hub=Jeffrey Epstein(df90) j=0.145 demote-boundary | rep: News24 | Bill Gates tells Epstein hearing he 'never victimised anyone'
+   LLM-> SPLIT | SPLIT | Distinct storylines: UK politics, Prince Andrew, Bill Gates
+[519c6dc9] arts=213 hub=-(df0) j=0.15 demote-boundary | rep: Trump says he'll replace artists who backed out of concert with himsel
+   LLM-> SPLIT | SPLIT | Multiple distinct events with shared location and actor.
+[2c26faf1] arts=187 hub=-(df0) j=0.142 demote-boundary | rep: Rubio, Modi discuss bilateral trade, energy security, West Asia crisis
+   LLM-> SPLIT | SPLIT | Unrelated topics: Venezuela, EU sanctions, UK VAT, Iran war.
+[5eb9ecf2] arts=134 hub=-(df0) j=0.139 demote-boundary | rep: Judge blocks series of Trump policies halting immigration processing
+   LLM-> SPLIT | SPLIT | Mixed entities, unrelated topics, distinct events
+
+=== END (read-only; nothing written to DB) ===

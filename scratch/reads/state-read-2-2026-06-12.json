@@ -1,0 +1,338 @@
+{
+  "versions": [
+    {
+      "algo_version": "cluster_job_7/pf-v1/tg-v3/leiden-res1.0/rescue-v1",
+      "n": 34599,
+      "newest": "2026-06-01T08:22:19.391Z",
+      "oldest_created": "2026-06-03T02:02:19.932Z"
+    }
+  ],
+  "run_ids": [
+    {
+      "run_id": "1780452139",
+      "n": 34599
+    }
+  ],
+  "aem_def": [
+    {
+      "definition": " SELECT a.id AS article_id,\n    el.entity_id,\n    ed.canonical_name,\n    ed.entity_type,\n    ed.country,\n    array_agg(DISTINCT lower(TRIM(BOTH FROM (e.elem ->> 'name'::text)))) AS surface_forms,\n    count(*) AS mention_rows\n   FROM (((articles a\n     CROSS JOIN LATERAL jsonb_array_elements(a.entities_extracted) e(elem))\n     JOIN entity_lookup el ON ((el.name_norm = lower(TRIM(BOTH FROM (e.elem ->> 'name'::text))))))\n     JOIN entity_dictionary ed ON ((ed.id = el.entity_id)))\n  WHERE ((a.entities_extracted IS NOT NULL) AND (jsonb_typeof(a.entities_extracted) = 'array'::text))\n  GROUP BY a.id, el.entity_id, ed.canonical_name, ed.entity_type, ed.country;"
+    }
+  ],
+  "alias_probe": [
+    {
+      "canonical_name": "Indian National Congress",
+      "entity_type": "organization",
+      "state": "Goa",
+      "party": null,
+      "aliases": [
+        "INC",
+        "MLA Congress",
+        "Indian National Congress (INC)",
+        "Congress",
+        "Indian Congress"
+      ]
+    },
+    {
+      "canonical_name": "All Progressives Congress",
+      "entity_type": "organization",
+      "state": null,
+      "party": "APC",
+      "aliases": [
+        "All Progressives Congress",
+        "APC"
+      ]
+    },
+    {
+      "canonical_name": "Congress of Deputies (Spain)",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Spanish Congress"
+      ]
+    },
+    {
+      "canonical_name": "All Progressives Congress (APC)",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "All Progressives Congress (APC)"
+      ]
+    },
+    {
+      "canonical_name": "Argentine National Congress",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Congreso Argentino"
+      ]
+    },
+    {
+      "canonical_name": "National Congress of Brazil",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Brazilian Congress"
+      ]
+    },
+    {
+      "canonical_name": "Congress of Colombia",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Colombian Congress"
+      ]
+    },
+    {
+      "canonical_name": "Congress of the Union",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Mexican Congress"
+      ]
+    },
+    {
+      "canonical_name": "Congress of the Philippines",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Philippine Congress"
+      ]
+    },
+    {
+      "canonical_name": "Bharat Rashtra Samithi (BRS)",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Bharat Rashtra Samithi (BRS)"
+      ]
+    },
+    {
+      "canonical_name": "Congress Legislature Party",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Congress Legislature Party"
+      ]
+    },
+    {
+      "canonical_name": "Kerala Congress (Jacob)",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": "Kerala Congress (Jacob)",
+      "aliases": [
+        "MLA (Jacob)",
+        "(Jacob)",
+        "Kerala (Jacob)"
+      ]
+    },
+    {
+      "canonical_name": "Kerala Congress (Mani)",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": "Kerala Congress (Mani)",
+      "aliases": [
+        "Kerala (Mani)",
+        "MLA (Mani)",
+        "(Mani)"
+      ]
+    },
+    {
+      "canonical_name": "Kerala Congress",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": "Kerala Congress (Balakrishna)",
+      "aliases": [
+        "Kerala Congress (Mani)",
+        "MLA Congress",
+        "Congress",
+        "Kerala Congress (Jacob)",
+        "Kerala Congress (M)"
+      ]
+    },
+    {
+      "canonical_name": "All India N.R. Congress",
+      "entity_type": "person",
+      "state": "Puducherry",
+      "party": "All India N.R. Congress",
+      "aliases": [
+        "MLA Congress",
+        "Congress",
+        "All Congress"
+      ]
+    },
+    {
+      "canonical_name": "Congress (Secular)",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": "Congress (Secular)",
+      "aliases": [
+        "(Secular)",
+        "MLA (Secular)"
+      ]
+    },
+    {
+      "canonical_name": "Indian National Congress (INC)",
+      "entity_type": "person",
+      "state": "Meghalaya",
+      "party": null,
+      "aliases": [
+        "Indian (INC)",
+        "MLA (INC)",
+        "(INC)"
+      ]
+    },
+    {
+      "canonical_name": "Kerala Congress (M)",
+      "entity_type": "person",
+      "state": null,
+      "party": "Kerala Congress (M)",
+      "aliases": [
+        "Kerala (M)",
+        "(M)",
+        "MP (M)"
+      ]
+    },
+    {
+      "canonical_name": "Manjalamkuzhi Ali",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": null,
+      "aliases": [
+        "MLA Ali",
+        "Ali",
+        "Manjalamkuzhi Ali (Manjalamkuzhi Ali)"
+      ]
+    },
+    {
+      "canonical_name": "Mehboob Ali",
+      "entity_type": "person",
+      "state": "Uttar Pradesh",
+      "party": "Samajwadi Party",
+      "aliases": [
+        "MLA Ali",
+        "Ali",
+        "Mehboob Ali (Mehboob Ali)"
+      ]
+    },
+    {
+      "canonical_name": "Mian Mehar Ali",
+      "entity_type": "person",
+      "state": "Jammu and Kashmir",
+      "party": null,
+      "aliases": [
+        "Mian Mehar Ali (Kangan  (ST))",
+        "MLA Ali",
+        "Ali",
+        "Mian Ali"
+      ]
+    },
+    {
+      "canonical_name": "Mir Zulfeqar Ali",
+      "entity_type": "person",
+      "state": "Telangana",
+      "party": "All India Majlis-e-Ittehadul Muslimeen",
+      "aliases": [
+        "Mir Ali",
+        "Mir Zulfeqar Ali (Mir Zulfeqar Ali)",
+        "MLA Ali",
+        "Ali"
+      ]
+    },
+    {
+      "canonical_name": "Nationalist Congress Party – Sharadchandra Pawar",
+      "entity_type": "person",
+      "state": "Kerala",
+      "party": "Nationalist Congress Party – Sharadchandra Pawar",
+      "aliases": [
+        "Pawar",
+        "MLA Pawar",
+        "Nationalist Pawar"
+      ]
+    },
+    {
+      "canonical_name": "National Trades Union Congress",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "National Trades Union Congress"
+      ]
+    },
+    {
+      "canonical_name": "Nepali Congress",
+      "entity_type": "organization",
+      "state": null,
+      "party": null,
+      "aliases": [
+        "Nepali Congress"
+      ]
+    }
+  ],
+  "dict_meta_sample": [
+    {
+      "canonical_name": "Anthony Albanese",
+      "metadata": {
+        "role": "Prime Minister",
+        "source": "harvest_expansion_2026-05-26",
+        "country": "AU",
+        "role_title": "Prime Minister of Australia",
+        "mention_count": 358
+      }
+    },
+    {
+      "canonical_name": "Richard Marles",
+      "metadata": {
+        "role": "Deputy PM / Defence Minister",
+        "source": "harvest_expansion_2026-05-26",
+        "country": "AU",
+        "role_title": "Deputy Prime Minister",
+        "mention_count": 27
+      }
+    },
+    {
+      "canonical_name": "Penny Wong",
+      "metadata": {
+        "role": "Foreign Minister",
+        "source": "harvest_expansion_2026-05-26",
+        "country": "AU",
+        "role_title": null,
+        "mention_count": 72
+      }
+    },
+    {
+      "canonical_name": "Jim Chalmers",
+      "metadata": {
+        "role": "Treasurer",
+        "source": "harvest_expansion_2026-05-26",
+        "country": "AU",
+        "role_title": "Minister for Finance",
+        "mention_count": 317
+      }
+    },
+    {
+      "canonical_name": "Tony Burke",
+      "metadata": {
+        "role": "Home Affairs Minister",
+        "source": "harvest_expansion_2026-05-26",
+        "country": "AU",
+        "role_title": "Minister",
+        "mention_count": 41
+      }
+    }
+  ],
+  "dict_count": [
+    {
+      "n": 19356,
+      "redirected": 369
+    }
+  ]
+}

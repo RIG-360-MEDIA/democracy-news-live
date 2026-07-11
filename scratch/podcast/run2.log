@@ -1,0 +1,55 @@
+=== RESOURCE CHECK ===
+9
+73.5
+0 %, 21779 MiB, 24564 MiB
+=== START nn generate ===
+  Input should be a valid string [type=string_type, input_value=[{'segments': [{'descript...ents and Their Impact'}], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_type
+******************************************************
+
+--------------------------------------------------------------------------------
+
+Next speaker: PlannerAgent
+
+PlannerAgent (to chat_manager):
+
+
+***** Suggested tool call (call_scfl5lol): generate_execution_plan *****
+Arguments: 
+{"execution_plans":"{\"title\": \"AI Advancements and Their Impact\", \"summary\": \"This episode explores recent advancements in artificial intelligence technology with a focus on understanding how these innovations are shaping everyday applications.\", \"key_points\": [{\"point\": \"Introduction to current AI trends\", \"type\": \"narrative\"}, {\"point\": \"Discussion on real-world implications of new algorithms\", \"type\": \"question\"}, {\"point\": \"Expert viewpoints on the ethical considerations around data use in AI systems\", \"type\": \"reaction\"}], \"conclusion\": \"In conclusion, emerging trends in artificial intelligence continue to offer exciting advancements for various industries while also prompting discussions on ethical standards and practical applications.\", \"tone\": \"Engaging and informative with a balance of technical depth and accessibility\", \"target_audience\": \"Tech enthusiasts and professionals seeking insights into AI developments without needing extensive background knowledge.\", \"potential_segments\": [{\"name\": \"Opening Introduction\", \"description\": \"The interviewer will introduce the topic and set expectations for the episode's discussion.\", \"type\": \"Introduction\"}, {\"name\": \"Deep Dive\", \"description\": \"Detailed exploration of AI algorithms and their impact on society, with expert input.\", \"type\": \"Main Content\"}, {\"name\": \"Closing Thoughts\", \"description\": \"Summary of key insights from the discussion and any potential implications for listeners' industries or daily lives.\", \"type\": \"Conclusion\"}], \"controversial_topics\": [\"Ethical considerations in AI data usage\", \"Bias in algorithm development and its societal impacts\"]}"}
+************************************************************************
+
+--------------------------------------------------------------------------------
+
+Next speaker: _Swarm_Tool_Executor
+
+
+>>>>>>>> EXECUTING FUNCTION generate_execution_plan...
+Call ID: call_scfl5lol
+Input arguments: {'execution_plans': '{"title": "AI Advancements and Their Impact", "summary": "This episode explores recent advancements in artificial intelligence technology with a focus on understanding how these innovations are shaping everyday applications.", "key_points": [{"point": "Introduction to current AI trends", "type": "narrative"}, {"point": "Discussion on real-world implications of new algorithms", "type": "question"}, {"point": "Expert viewpoints on the ethical considerations around data use in AI systems", "type": "reaction"}], "conclusion": "In conclusion, emerging trends in artificial intelligence continue to offer exciting advancements for various industries while also prompting discussions on ethical standards and practical applications.", "tone": "Engaging and informative with a balance of technical depth and accessibility", "target_audience": "Tech enthusiasts and professionals seeking insights into AI developments without needing extensive background knowledge.", "potential_segments": [{"name": "Opening Introduction", "description": "The interviewer will introduce the topic and set expectations for the episode\'s discussion.", "type": "Introduction"}, {"name": "Deep Dive", "description": "Detailed exploration of AI algorithms and their impact on society, with expert input.", "type": "Main Content"}, {"name": "Closing Thoughts", "description": "Summary of key insights from the discussion and any potential implications for listeners\' industries or daily lives.", "type": "Conclusion"}], "controversial_topics": ["Ethical considerations in AI data usage", "Bias in algorithm development and its societal impacts"]}'}
+
+>>>>>>>> EXECUTED FUNCTION generate_execution_plan...
+Call ID: call_scfl5lol
+Input arguments: {'execution_plans': '{"title": "AI Advancements and Their Impact", "summary": "This episode explores recent advancements in artificial intelligence technology with a focus on understanding how these innovations are shaping everyday applications.", "key_points": [{"point": "Introduction to current AI trends", "type": "narrative"}, {"point": "Discussion on real-world implications of new algorithms", "type": "question"}, {"point": "Expert viewpoints on the ethical considerations around data use in AI systems", "type": "reaction"}], "conclusion": "In conclusion, emerging trends in artificial intelligence continue to offer exciting advancements for various industries while also prompting discussions on ethical standards and practical applications.", "tone": "Engaging and informative with a balance of technical depth and accessibility", "target_audience": "Tech enthusiasts and professionals seeking insights into AI developments without needing extensive background knowledge.", "potential_segments": [{"name": "Opening Introduction", "description": "The interviewer will introduce the topic and set expectations for the episode\'s discussion.", "type": "Introduction"}, {"name": "Deep Dive", "description": "Detailed exploration of AI algorithms and their impact on society, with expert input.", "type": "Main Content"}, {"name": "Closing Thoughts", "description": "Summary of key insights from the discussion and any potential implications for listeners\' industries or daily lives.", "type": "Conclusion"}], "controversial_topics": ["Ethical considerations in AI data usage", "Bias in algorithm development and its societal impacts"]}'}
+Output:
+{"title": "AI Advancements and Their Impact", "summary": "This episode explores recent advancements in artificial intelligence technology with a focus on understanding how these innovations are shaping everyday applications.", "key_points": [{"point": "Introduction to current AI trends", "type": "narrative"}, {"point": "Discussion on real-world implications of new algorithms", "type": "question"}, {"point": "Expert viewpoints on the ethical considerations around data use in AI systems", "type": "reaction"}], "conclusion": "In conclusion, emerging trends in artificial intelligence continue to offer exciting advancements for various industries while also prompting discussions on ethical standards and practical applications.", "tone": "Engaging and informative with a balance of technical depth and accessibility", "target_audience": "Tech enthusiasts and professionals seeking insights into AI developments without needing extensive background knowledge.", "potential_segments": [{"name": "Opening Introduction", "description": "The interviewer will introduce the topic and set expectations for the episode's discussion.", "type": "Introduction"}, {"name": "Deep Dive", "description": "Detailed exploration of AI algorithms and their impact on society, with expert input.", "type": "Main Content"}, {"name": "Closing Thoughts", "description": "Summary of key insights from the discussion and any potential implications for listeners' industries or daily lives.", "type": "Conclusion"}], "controversial_topics": ["Ethical considerations in AI data usage", "Bias in algorithm development and its societal impacts"]}
+_Swarm_Tool_Executor (to chat_manager):
+
+***** Response from calling tool (call_scfl5lol) *****
+{"title": "AI Advancements and Their Impact", "summary": "This episode explores recent advancements in artificial intelligence technology with a focus on understanding how these innovations are shaping everyday applications.", "key_points": [{"point": "Introduction to current AI trends", "type": "narrative"}, {"point": "Discussion on real-world implications of new algorithms", "type": "question"}, {"point": "Expert viewpoints on the ethical considerations around data use in AI systems", "type": "reaction"}], "conclusion": "In conclusion, emerging trends in artificial intelligence continue to offer exciting advancements for various industries while also prompting discussions on ethical standards and practical applications.", "tone": "Engaging and informative with a balance of technical depth and accessibility", "target_audience": "Tech enthusiasts and professionals seeking insights into AI developments without needing extensive background knowledge.", "potential_segments": [{"name": "Opening Introduction", "description": "The interviewer will introduce the topic and set expectations for the episode's discussion.", "type": "Introduction"}, {"name": "Deep Dive", "description": "Detailed exploration of AI algorithms and their impact on society, with expert input.", "type": "Main Content"}, {"name": "Closing Thoughts", "description": "Summary of key insights from the discussion and any potential implications for listeners' industries or daily lives.", "type": "Conclusion"}], "controversial_topics": ["Ethical considerations in AI data usage", "Bias in algorithm development and its societal impacts"]}
+******************************************************
+
+--------------------------------------------------------------------------------
+
+Next speaker: ScriptGeneratorAgent
+
+=== EXIT: -1 ===
+=== OUTPUT FILES ===
+
+Name                                       Length 
+----                                       ------ 
+parsed_docs                                       
+content.md                                 1104   
+c399862d3b9d6b76c8436e924a68c45b-Paper.pdf 1418820
+
+

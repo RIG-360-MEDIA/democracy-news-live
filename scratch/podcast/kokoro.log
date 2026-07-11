@@ -1,0 +1,27 @@
+killed_nn_run 18004
+=== KOKORO TTS START ===
+python.exe : C:\Users\sshuser\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\rnn.py:123: 
+UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers 
+greater than 1, but got dropout=0.2 and num_layers=1
+At C:\Users\sshuser\kokoro_go.ps1:5 char:1
++ & "$env:USERPROFILE\AppData\Local\Programs\Python\Python311\python.ex ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\sshuse...nd num_layers=1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn(
+C:\Users\sshuser\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\utils\weight_norm.py:143: 
+FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+Collecting en-core-web-sm==3.8.0
+  Downloading https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl (12.8 MB)
+     --------------------------------------- 12.8/12.8 MB 46.7 MB/s eta 0:00:00
+Installing collected packages: en-core-web-sm
+Successfully installed en-core-web-sm-3.8.0
+[notice] A new release of pip is available: 24.0 -> 26.1.2
+[notice] To update, run: python.exe -m pip install --upgrade pip
+WARNING: Defaulting repo_id to hexgrad/Kokoro-82M. Pass repo_id='hexgrad/Kokoro-82M' to suppress this warning.
+[38;5;2m✔ Download and installation successful[0m
+You can now load the package via spacy.load('en_core_web_sm')
+WROTE C:\Users\sshuser\neuralnoise_source\neuralnoise-main\output\kokoro_test\episode.wav 53.1 sec
+=== EXIT 0 ===

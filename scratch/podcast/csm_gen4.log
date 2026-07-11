@@ -1,0 +1,22 @@
+[transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128000. This may result in unexpected behavior.
+[transformers] Model config: audio_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: audio_eos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128003. This may result in unexpected behavior.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|##########| 2/2 [00:00<00:00, 3211.57it/s]
+Loading weights:   0%|          | 0/538 [00:00<?, ?it/s]Loading weights:   0%|          | 1/538 [00:00<02:03,  4.35it/s]Loading weights:   2%|2         | 13/538 [00:00<00:10, 48.62it/s]Loading weights:   6%|5         | 30/538 [00:00<00:05, 88.40it/s]Loading weights:   8%|8         | 45/538 [00:00<00:04, 107.35it/s]Loading weights:  11%|#         | 59/538 [00:00<00:04, 113.53it/s]Loading weights:  14%|#4        | 76/538 [00:00<00:03, 127.81it/s]Loading weights:  17%|#7        | 93/538 [00:00<00:03, 133.95it/s]Loading weights:  20%|#9        | 107/538 [00:00<00:03, 133.64it/s]Loading weights:  22%|##2       | 121/538 [00:01<00:03, 134.97it/s]Loading weights:  26%|##5       | 138/538 [00:01<00:02, 141.57it/s]Loading weights:  54%|#####3    | 290/538 [00:01<00:00, 538.80it/s]Loading weights:  92%|#########2| 497/538 [00:01<00:00, 891.71it/s]Loading weights: 100%|##########| 538/538 [00:01<00:00, 273.61it/s]
+turn 1 done 21.4 s
+turn 2 done 17.6 s
+turn 3 done 1.4 s
+turn 4 done 5.4 s
+turn 5 done 10.9 s
+turn 6 done 7.2 s
+turn 7 done 1.7 s
+turn 8 done 6.0 s
+turn 9 done 10.0 s
+turn 10 done 11.7 s
+turn 11 done 1.7 s
+turn 12 done 11.2 s
+turn 13 done 2.3 s
+turn 14 done 2.7 s
+turn 15 done 10.6 s
+WROTE episode_csm4.wav 122.4 sec

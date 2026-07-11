@@ -1,0 +1,27 @@
+# CONTENT-GEN VALIDATION SUITE
+
+## Test 1+5: Boundary (A vs B) + Guard-C reject rate + faithfulness
+ac | isrc | A_words A_ungrounded | B_words B_ungrounded | guardC(B)
+  3 |   3 | A: 343w u= 0 | B: 323w u= 0 | SEVERAL
+  3 |   3 | A: 349w u= 0 | B: 288w u= 0 | ONE
+ 13 |  12 | A: 300w u= 0 | B: 306w u= 0 | ONE
+ 15 |  14 | A: 349w u= 0 | B: 283w u= 1 | ONE
+ 19 |  14 | A: 361w u= 3 | B: 284w u= 0 | ONE
+ 22 |  15 | A: 356w u= 0 | B: 302w u= 0 | SEVERAL
+ 26 |  19 | A: 397w u= 0 | B: 301w u= 0 | SEVERAL
+ 28 |  15 | A: 435w u= 0 | B: 402w u= 1 | SEVERAL
+ 39 |  19 | A: 429w u= 1 | B: 396w u= 1 | SEVERAL
+ 49 |  23 | A: 406w u= 6 | B: 349w u= 0 | ONE
+ 56 |  28 | A: 361w u= 1 | B: 315w u= 1 | SEVERAL
+ 70 |  41 | A: 389w u= 0 | B: 382w u= 0 | SEVERAL
+GUARD-C reject rate (current contaminated pool): 7/12 = 58%
+
+## Test 2: Numeric-disagreement (must report RANGE, not pick)
+- disagree: The death toll was reported to be between 20 and 25 people.
+- agree: The death toll was 20 according to both sources.
+
+## Test 4: FN/FP at scale (real model entailment)
+cases=16 correct=16 FN(fabrication passed)=0 FP(faithful flagged)=0
+
+## Latency/cost: 54 calls, avg 1.4s/call, max 6.6s
+<!-- DONE -->

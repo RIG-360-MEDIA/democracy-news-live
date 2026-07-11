@@ -1,0 +1,22 @@
+[transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128000. This may result in unexpected behavior.
+[transformers] Model config: audio_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: audio_eos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128003. This may result in unexpected behavior.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|##########| 2/2 [00:00<00:00, 5753.50it/s]
+Loading weights:   0%|          | 0/538 [00:00<?, ?it/s]Loading weights:   0%|          | 1/538 [00:00<02:04,  4.31it/s]Loading weights:   3%|2         | 14/538 [00:00<00:10, 49.55it/s]Loading weights:   6%|5         | 31/538 [00:00<00:05, 87.91it/s]Loading weights:   9%|8         | 48/538 [00:00<00:04, 111.40it/s]Loading weights:  11%|#1        | 61/538 [00:00<00:04, 116.72it/s]Loading weights:  14%|#4        | 76/538 [00:00<00:03, 123.57it/s]Loading weights:  17%|#7        | 93/538 [00:00<00:03, 134.02it/s]Loading weights:  20%|#9        | 107/538 [00:00<00:03, 134.12it/s]Loading weights:  23%|##2       | 122/538 [00:01<00:03, 132.47it/s]Loading weights:  26%|##5       | 139/538 [00:01<00:02, 141.54it/s]Loading weights:  55%|#####5    | 297/538 [00:01<00:00, 553.75it/s]Loading weights:  92%|#########2| 497/538 [00:01<00:00, 904.48it/s]Loading weights: 100%|##########| 538/538 [00:01<00:00, 273.75it/s]
+turn 1 done 8.2 s
+turn 2 done 11.9 s
+turn 3 done 1.8 s
+turn 4 done 4.2 s
+turn 5 done 5.0 s
+turn 6 done 6.0 s
+turn 7 done 1.5 s
+turn 8 done 6.3 s
+turn 9 done 5.9 s
+turn 10 done 6.2 s
+turn 11 done 2.0 s
+turn 12 done 5.7 s
+turn 13 done 4.2 s
+turn 14 done 1.4 s
+turn 15 done 6.4 s
+WROTE episode_csm3.wav 77.4 sec scipy= False

@@ -1,0 +1,22 @@
+[transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128000. This may result in unexpected behavior.
+[transformers] Model config: audio_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128002. This may result in unexpected behavior.
+[transformers] Model config: audio_eos_token_id must be `None` or an integer within the vocabulary (between 0 and 2050), got 128003. This may result in unexpected behavior.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|##########| 2/2 [00:00<00:00, 4385.05it/s]
+Loading weights:   0%|          | 0/538 [00:00<?, ?it/s]Loading weights:   0%|          | 1/538 [00:00<02:03,  4.33it/s]Loading weights:   2%|2         | 13/538 [00:00<00:10, 48.14it/s]Loading weights:   6%|5         | 30/538 [00:00<00:05, 87.14it/s]Loading weights:   8%|7         | 43/538 [00:00<00:04, 100.80it/s]Loading weights:  11%|#         | 58/538 [00:00<00:04, 113.43it/s]Loading weights:  14%|#3        | 75/538 [00:00<00:03, 127.43it/s]Loading weights:  17%|#6        | 89/538 [00:00<00:03, 131.00it/s]Loading weights:  19%|#9        | 104/538 [00:00<00:03, 130.24it/s]Loading weights:  22%|##2       | 121/538 [00:01<00:03, 138.84it/s]Loading weights:  26%|##5       | 138/538 [00:01<00:02, 145.88it/s]Loading weights:  53%|#####2    | 283/538 [00:01<00:00, 521.04it/s]Loading weights:  92%|#########2| 497/538 [00:01<00:00, 894.64it/s]Loading weights: 100%|##########| 538/538 [00:01<00:00, 276.31it/s]
+turn 1 done 8.9 s
+turn 2 done 9.5 s
+turn 3 done 6.2 s
+turn 4 done 4.1 s
+turn 5 done 5.6 s
+turn 6 done 5.8 s
+turn 7 done 1.9 s
+turn 8 done 5.4 s
+turn 9 done 6.8 s
+turn 10 done 6.9 s
+turn 11 done 6.3 s
+turn 12 done 5.8 s
+turn 13 done 5.7 s
+turn 14 done 1.4 s
+turn 15 done 8.4 s
+WROTE episode_csm2.wav 90.9 sec

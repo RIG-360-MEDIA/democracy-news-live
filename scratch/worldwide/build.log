@@ -1,0 +1,54 @@
+
+> rig-news@0.1.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\Dell\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Users\Dell\Desktop\rig-news\package-lock.json
+
+   ▲ Next.js 15.5.18
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 17.6s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/14) ...
+   Generating static pages (3/14) 
+   Generating static pages (6/14) 
+   Generating static pages (10/14) 
+ ✓ Generating static pages (14/14)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    15.2 kB         164 kB
+├ ○ /_not-found                            993 B         103 kB
+├ ○ /all-sides                             10 kB         116 kB
+├ ƒ /api/auth/[...nextauth]                130 B         103 kB
+├ ƒ /api/worldwide                         130 B         103 kB
+├ ƒ /api/worldwide/shown                   130 B         103 kB
+├ ○ /digest                              13.9 kB         157 kB
+├ ƒ /long-read                           3.83 kB         110 kB
+├ ƒ /long-read/[slug]                      161 B         106 kB
+├ ○ /long-view                           10.5 kB         154 kB
+├ ○ /minute                              12.2 kB         156 kB
+├ ƒ /onboarding                          9.02 kB         152 kB
+├ ○ /queue                                 12 kB         155 kB
+├ ○ /signin                                127 B         149 kB
+├ ○ /signup                                127 B         149 kB
+└ ○ /today                               4.84 kB         154 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/255-4f84124391a7dac4.js       46.2 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          1.99 kB
+
+
+ƒ Middleware                             87.4 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,323 @@
+{
+  "migration_tables": [],
+  "story_clusters_cols": [
+    {
+      "column_name": "story_id",
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "redirected_to",
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "provisional",
+      "data_type": "boolean",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "bigint",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "algo_version",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "first_seen_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "last_seen_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "as_of",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "article_count",
+      "data_type": "integer",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "source_count",
+      "data_type": "integer",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "independent_source_count",
+      "data_type": "integer",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subject_country",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subject_region",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subject_locations",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "topic",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "event_type",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "primary_entities",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "languages",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "stance_distribution",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "sentiment",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "representative_quote",
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "importance_score",
+      "data_type": "numeric",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "representative_article_id",
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "representative_title",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "entity_core_cov",
+      "data_type": "numeric",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_template_family",
+      "data_type": "boolean",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "title_cohesion",
+      "data_type": "numeric",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "rescued_from_story_id",
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "suppression_reason",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "suppressed_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "prev_representative_article_id_f1",
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "prev_representative_title_f1",
+      "data_type": "text",
+      "is_nullable": "YES"
+    }
+  ],
+  "story_tables": [
+    {
+      "name": "story_cluster_members",
+      "approx_rows": "136581"
+    },
+    {
+      "name": "story_cluster_members_old",
+      "approx_rows": "47940"
+    },
+    {
+      "name": "story_clusters",
+      "approx_rows": "34599"
+    },
+    {
+      "name": "story_clusters_old",
+      "approx_rows": "37982"
+    },
+    {
+      "name": "story_edges",
+      "approx_rows": "527280"
+    },
+    {
+      "name": "story_edges_old",
+      "approx_rows": "22818"
+    },
+    {
+      "name": "story_enrichment_status",
+      "approx_rows": "716"
+    },
+    {
+      "name": "story_facts",
+      "approx_rows": "9552"
+    },
+    {
+      "name": "story_geo",
+      "approx_rows": "702"
+    },
+    {
+      "name": "story_quotes",
+      "approx_rows": "27721"
+    },
+    {
+      "name": "story_sources",
+      "approx_rows": "11953"
+    },
+    {
+      "name": "story_stance",
+      "approx_rows": "645"
+    },
+    {
+      "name": "story_timeline",
+      "approx_rows": "716"
+    }
+  ],
+  "parachute": [
+    {
+      "clusters_old": "analytics.story_clusters_old",
+      "members_old": null
+    }
+  ],
+  "keeper_count": [
+    {
+      "n": 34599
+    }
+  ],
+  "suppression_reasons": [
+    {
+      "suppression_reason": null,
+      "n": 34540
+    },
+    {
+      "suppression_reason": "template-family",
+      "n": 51
+    },
+    {
+      "suppression_reason": "actor-pile-handflag",
+      "n": 6
+    },
+    {
+      "suppression_reason": "size-core-gate",
+      "n": 2
+    }
+  ],
+  "entity_dict_cols": [
+    {
+      "column_name": "id",
+      "data_type": "uuid"
+    },
+    {
+      "column_name": "canonical_name",
+      "data_type": "text"
+    },
+    {
+      "column_name": "entity_type",
+      "data_type": "text"
+    },
+    {
+      "column_name": "aliases",
+      "data_type": "ARRAY"
+    },
+    {
+      "column_name": "state",
+      "data_type": "text"
+    },
+    {
+      "column_name": "party",
+      "data_type": "text"
+    },
+    {
+      "column_name": "metadata",
+      "data_type": "jsonb"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone"
+    },
+    {
+      "column_name": "country",
+      "data_type": "character"
+    },
+    {
+      "column_name": "source",
+      "data_type": "text"
+    },
+    {
+      "column_name": "redirected_to",
+      "data_type": "uuid"
+    }
+  ],
+  "aem_matviews": [
+    {
+      "schemaname": "public",
+      "matviewname": "article_entity_mentions"
+    },
+    {
+      "schemaname": "public",
+      "matviewname": "clipping_entity_mentions"
+    },
+    {
+      "schemaname": "public",
+      "matviewname": "youtube_clip_entity_mentions"
+    }
+  ]
+}

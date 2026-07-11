@@ -1,0 +1,90 @@
+DROP VIEW
+NOTICE:  view "scored" does not exist, skipping
+CREATE VIEW
+DROP VIEW
+NOTICE:  view "ranked_div" does not exist, skipping
+CREATE VIEW
+===SECTION top_stories_WORLD===
+9.84|233|4310|POLITICS|IN|Again, US launches new strikes on Iran
+9.45|158|1534|OTHER|XX|UN to meet on Lebanon after Israel takes Beauf
+8.50|62|522|HEALTH|ES|Spain reports new hantavirus case in passenger
+8.40|59|210|OTHER|CU|Cuba’s blackouts leave high-rise residents wit
+8.33|56|192|TECHNOLOGY|US|Could anything but profit steer AI? The OpenAI
+8.31|51|120|SPORTS|IN|Virat Kohli shines again with unbeaten 75, sur
+8.24|50|113|OTHER|IN|​Score board: On the CBSE’s credibility, its e
+8.21|46|119|SPORTS|IN|Royal Challengers Bengaluru retain IPL title w
+8.19|45|272|OTHER|IN|Who Helped Twisha Sharma's Husband While On Th
+8.08|41|61|OTHER|IN|Mango cultivation a very special part of India
+===SECTION top_stories_INDIA===
+9.84|233|4310|POLITICS|Again, US launches new strikes on Iran
+8.31|51|120|SPORTS|Virat Kohli shines again with unbeaten 75, sur
+8.24|50|113|OTHER|​Score board: On the CBSE’s credibility, its e
+8.21|46|119|SPORTS|Royal Challengers Bengaluru retain IPL title w
+8.19|45|272|OTHER|Who Helped Twisha Sharma's Husband While On Th
+8.08|41|61|OTHER|Mango cultivation a very special part of India
+8.04|42|64|SECURITY|U.S. to send only used nuclear submarines to A
+8.03|38|81|LEGAL|NTA says It has tightened exam security after 
+===SECTION politics===
+9.84|233|IN|Again, US launches new strikes on Iran
+7.86|37|KE|Legal bid to block UK-backed French migrant de
+7.80|30|IN|Bengal CM Suvendu Adhikari Expands Cabinet, 35
+7.78|32|ZA|South Africa condemns 'fake videos' of alleged
+7.70|27|IN|Manipur’s ‘unknown’ killers: Three years of In
+7.67|39|JP|Japan Won’t Add Bonds on Calendar Basis to Fun
+===SECTION sports===
+8.31|51|IN|Virat Kohli shines again with unbeaten 75, sur
+8.21|46|FR|Patients find help with therapy donkeys at psy
+8.21|46|IN|Royal Challengers Bengaluru retain IPL title w
+8.15|42|IN|How father's tales of a helmetless Gavaskar fo
+8.08|40|IN|IPL 2026: How every piece of the puzzle fell i
+7.95|35|IN|'One felt nice ... ': Virat Kohli dons special
+===SECTION military_security===
+8.04|42|IN|U.S. to send only used nuclear submarines to A
+7.83|31|UA|Ukraine’s mobilization problem | Ukraine This 
+7.80|32|PK|Balochistan Liberation Army Preparing for Arme
+7.61|30|IN|Pak using rogue telecom signals to support ter
+7.60|26|IN|Manipur: Security Forces Capture Four UNLF Cad
+7.50|24|UA|Two killed after drone attack on Syzran, says 
+===SECTION climate_science===
+7.22|19|IN|Heatwave to persist across central and northwe
+6.71|16|IN|Thunderstorm forecast in 21 Telangana district
+6.69|27|US|Meteor Triggers Loud Boom ＆ Shaking Felt Acros
+6.15|13|IN|Delhi-NCR weather alert: Pleasant spell likely
+4.87|3|IN|Collector calls for massive expansion of natur
+4.82|15|XX|First ever talks to ditch fossil fuels as UN d
+===SECTION business_finance===
+7.65|27|US|How the US-Israel conflict with Iran is exposi
+7.45|43|IN|Commercial LPG cylinder in Delhi to now cost  
+7.44|30|IN|Rupee seen sliding to 100 per Dollar as Oil pr
+7.42|21|IN|Technical indicators signal caution despite hi
+7.40|20|IN|Rupee falls 8 paise to 95.78 against US dollar
+7.36|22|IN|Days after state polls, OMCs raise petrol, die
+===SECTION around_the_world===
+AU|7.62|28|Fiji cabinet approves new treaty with Australi
+CN|7.37|30|Would be happy to talk to U.S. President Donal
+GB|7.80|30|Konate leaves Liverpool on a free transfer
+GH|6.37|18|betPawa commits GHS 3.5m to support Black Star
+IN|9.84|233|Again, US launches new strikes on Iran
+KE|7.86|37|Legal bid to block UK-backed French migrant de
+LK|6.89|26|Ruturaj Gaikwad replaces Riyan Parag for India
+MY|6.39|16|Malaysia bars under-16s from social media as n
+NG|7.83|31|Dangote named Africa’s most admired brand for 
+PK|7.80|32|Balochistan Liberation Army Preparing for Arme
+US|8.33|56|Could anything but profit steer AI? The OpenAI
+===EDGECHECKS===
+EC1 suppressed_excluded=PASS
+EC2 titleflag_excluded=PASS
+EC3 other_uncapped=PASS(78 OTHER in top100)
+EC4 topic_cap_holds=PASS
+EC5 india_scope_pure=PASS
+EC6 single_article_in_top50=0/50
+EC7 atw_one_per_country=PASS
+EC8 section_POLITICS=OK(3268)
+EC8 section_SPORTS=OK(4857)
+EC8 section_SECURITY=OK(2116)
+EC8 section_ENVIRONMENT=OK(735)
+EC8 section_HEALTH=OK(1479)
+EC8 section_BUSINESS=OK(1014)
+EC8 section_FINANCE=OK(832)
+EC8 section_LEGAL=OK(1717)
+EC8 section_TECHNOLOGY=OK(1066)
