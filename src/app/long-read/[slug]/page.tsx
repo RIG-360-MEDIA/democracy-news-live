@@ -7,11 +7,23 @@ import { CACHE_TAGS, READER_CACHE_TTL } from '@/lib/cache';
 import { getStoryDetail } from '@/lib/worldwide/detail';
 import { StoryRead } from '@/components/long-read/story-read';
 
-export const dynamic = 'force-dynamic';
+// ISR (E8): story pages were force-dynamic, so every view re-rendered on the server (always a CDN
+// MISS, ~1 s TTFB). Now each slug is rendered on first visit and the HTML is cached for `revalidate`
+// seconds. No paths are prerendered at build (generateStaticParams → []), so the build needs no DB.
+// Invalidation: the render reads through getCachedStoryDetail, whose CACHE_TAGS.storyDetail tag is
+// attached to the cached page too — so revalidateTag(storyDetail) (studio kill/edit, the box's
+// /api/revalidate) purges the HTML as well as the data, and a killed story re-renders to 404.
+// Must be a literal (Next reads it statically); keep in step with READER_CACHE_TTL's 1800 s default.
+export const revalidate = 1800;
+export const dynamicParams = true;
 
-// Cache the Neon read (keyed by slug). getStoryDetail is called twice per view
+export function generateStaticParams(): { slug: string }[] {
+  return [];
+}
+
+// Cache the Neon read (keyed by slug). getStoryDetail is called twice per render
 // (generateMetadata + the page body); caching collapses that to one query and
-// serves subsequent visitors from cache until READER_CACHE_TTL / an editor edit.
+// serves subsequent renders from cache until READER_CACHE_TTL / an editor edit.
 const getCachedStoryDetail = unstable_cache(
   (slug: string) => getStoryDetail(slug),
   ['reader-story-detail'],
