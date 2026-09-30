@@ -7,6 +7,7 @@ import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cache';
+import { revalidateStoryPage } from '@/lib/revalidate-story';
 import { guardApi } from '@/lib/studio/guard';
 import { changeManualStory, ManualStoryError, type ManualStatus, type ManualStoryPatch } from '@/lib/studio/manual-edit';
 import { manualPatchSchema, storyIdSchema } from '@/lib/studio/input-schemas';
@@ -25,7 +26,7 @@ async function apply(id: string, patch: ManualStoryPatch, status: ManualStatus |
   try {
     const data = await changeManualStory(id, patch, status, editor);
     revalidateTag(CACHE_TAGS.frontPage);
-    revalidateTag(CACHE_TAGS.storyDetail);
+    revalidateStoryPage(id); // unpublish/delete must not survive one more cached view
     return NextResponse.json({ ok: true, data, error: null });
   } catch (e: unknown) {
     if (e instanceof ManualStoryError) return fail(String(e.status), e.message, e.status);

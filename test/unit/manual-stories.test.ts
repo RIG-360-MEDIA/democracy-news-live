@@ -29,7 +29,8 @@ vi.mock('@/lib/studio/current-user', () => ({
     return u ? { id: u.id, email: u.email, role: u.role } : null;
   }),
 }));
-vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }));
+const revalidatePath = vi.fn();
+vi.mock('next/cache', () => ({ revalidateTag: vi.fn(), revalidatePath: (p: string) => revalidatePath(p) }));
 
 import { changeManualStory, ManualStoryError } from '@/lib/studio/manual-edit';
 import { manualStoryCards, manualStoryDetail } from '@/lib/studio/manual-feed';
@@ -128,5 +129,7 @@ describe('PATCH /api/studio/manual/[id] validation', () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as { data: { status: string; action: string } };
     expect(json.data).toMatchObject({ status: 'UNPUBLISHED', action: 'manual_unpublish' });
+    // the cached reader page is dropped at once, not after one more stale view
+    expect(revalidatePath).toHaveBeenCalledWith(expect.stringMatching(/^\/long-read\//));
   });
 });
