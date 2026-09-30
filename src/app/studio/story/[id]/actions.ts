@@ -6,6 +6,7 @@
 // nothing is destroyed and the invariant (generated tables never written) holds.
 
 import { revalidateTag } from 'next/cache';
+import { revalidateStoryPage } from '@/lib/revalidate-story';
 
 import { CACHE_TAGS } from '@/lib/cache';
 import { z } from 'zod';
@@ -113,7 +114,7 @@ export async function revert(
 
     await applyOverride(storyId, restorePatch(rows[0].before), guard.editor.id, 'revert');
     revalidateTag(CACHE_TAGS.frontPage);
-    revalidateTag(CACHE_TAGS.storyDetail);
+    revalidateStoryPage(storyId);
     return { ok: true };
   } catch (e: unknown) {
     console.error('[studio/revert] failed', { editor: guard.editor.id, storyId, auditId, error: e });

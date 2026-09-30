@@ -3,6 +3,8 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 
+import { BRAND } from '@/lib/brand';
+
 import { Wordmark } from '@/components/brand/wordmark';
 import { ThemeToggle } from '@/components/brand/theme-toggle';
 import { WorldClock } from '@/components/brand/world-clock';
@@ -325,7 +327,7 @@ function TopNav() {
       <div className="grid items-center px-5 md:px-10 lg:px-16 py-5" style={{ gridTemplateColumns: '1fr auto 1fr', borderBottom: `1px solid ${RULE}` }}>
         <MastheadDate />
         <Link
-          href="/long-read"
+          href={BRAND.key === 'dnl' ? '/long-read' : '/today'}
           className="justify-self-center"
           aria-label="Democracy News Live — home"
           style={{

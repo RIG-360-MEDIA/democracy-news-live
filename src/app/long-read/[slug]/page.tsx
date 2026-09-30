@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { BRAND } from '@/lib/brand';
 import { CACHE_TAGS, READER_CACHE_TTL } from '@/lib/cache';
-import { getStoryDetail } from '@/lib/worldwide/detail';
+import { getStoryDetail, UUID_RE } from '@/lib/worldwide/detail';
 import { StoryRead } from '@/components/long-read/story-read';
 
 // ISR (E8): story pages were force-dynamic, so every view re-rendered on the server (always a CDN
@@ -38,6 +38,8 @@ interface PageProps {
 // not the generic site card. Falls back to the branded default if the story has no image.
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  // Junk slugs (bot scans) never reach the Data Cache — one cached entry per real story only.
+  if (!UUID_RE.test(slug)) return { title: 'Democracy News Live' };
   const story = await getCachedStoryDetail(slug).catch(() => null);
   if (!story) return { title: 'Democracy News Live' };
   const image = story.image ?? '/cards/fallback-1.png'; // story.image is already the cleaned/denylisted hero
@@ -66,6 +68,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
+  if (!UUID_RE.test(slug)) notFound();
   const story = await getCachedStoryDetail(slug);
   if (!story) notFound();
   // Structured data (P06 D-4): lets search engines show this as a news article.

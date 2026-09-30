@@ -9,6 +9,7 @@
 // round-trip failed.
 
 import { revalidateTag } from 'next/cache';
+import { revalidateStoryPage } from '@/lib/revalidate-story';
 import { NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cache';
@@ -80,6 +81,7 @@ export async function POST(_req: Request, { params }: RouteContext) {
 
   // A new manual story can surface on the front page — bust the reader cache now.
   revalidateTag(CACHE_TAGS.frontPage);
+  revalidateStoryPage(storyId); // an editor may have opened the id before publish (cached 404)
 
   try {
     await confirmPublished(jobId, storyId, editorId);

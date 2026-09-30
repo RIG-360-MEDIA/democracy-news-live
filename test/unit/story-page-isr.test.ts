@@ -4,7 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // path still holds: getStoryDetail returns null for a killed story, and the page must notFound().
 const getStoryDetail = vi.fn();
 vi.mock('next/cache', () => ({ unstable_cache: (fn: unknown) => fn }));
-vi.mock('@/lib/worldwide/detail', () => ({ getStoryDetail: (slug: string) => getStoryDetail(slug) }));
+vi.mock('@/lib/worldwide/detail', () => ({
+  getStoryDetail: (slug: string) => getStoryDetail(slug),
+  UUID_RE: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+}));
 vi.mock('@/components/long-read/story-read', () => ({ StoryRead: () => null }));
 
 const SLUG = '3f2b8c1e-0a4d-4e7b-9c61-2d5e8f9a1b3c';
@@ -37,5 +40,13 @@ describe('/long-read/[slug] caching (E8)', () => {
     getStoryDetail.mockResolvedValue({ title: 'Headline', deck: 'Deck', image: null });
     const { default: ArticlePage } = await loadPage();
     await expect(ArticlePage({ params })).resolves.toBeTruthy();
+  });
+
+  it('a junk slug 404s without touching the cache or DB (no cached entry per bot URL)', async () => {
+    const { default: ArticlePage, generateMetadata } = await loadPage();
+    const junk = Promise.resolve({ slug: 'wp-login.php' });
+    await expect(ArticlePage({ params: junk })).rejects.toMatchObject({ digest: expect.stringContaining('404') });
+    await expect(generateMetadata({ params: junk })).resolves.toEqual({ title: 'Democracy News Live' });
+    expect(getStoryDetail).not.toHaveBeenCalled();
   });
 });

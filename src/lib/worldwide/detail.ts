@@ -151,7 +151,7 @@ export interface StoryDetail {
   date: string; // formatted "10 Jun 2026"
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Split a markdown body into render blocks. The generator writes headings with a SINGLE trailing

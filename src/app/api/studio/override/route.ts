@@ -1,5 +1,6 @@
 // Editorial CMS — override actions (publish/unpublish/pin/unpin + legacy kill/revive/boost/lock). Epic 002.
 import { revalidateTag } from 'next/cache';
+import { revalidateStoryPage } from '@/lib/revalidate-story';
 import { NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cache';
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     // Editor decision changes what readers see — bust the reader Data Cache now
     // so it reflects immediately instead of after READER_CACHE_TTL.
     revalidateTag(CACHE_TAGS.frontPage);
-    revalidateTag(CACHE_TAGS.storyDetail);
+    revalidateStoryPage(storyId);
     // Where the story now sits on the reader front page — the Newsroom publish toast reports it
     // ("Live — #6 in Politics"). Best-effort; null when the story has no dedicated section.
     const placement = await projectPlacement(storyId);
