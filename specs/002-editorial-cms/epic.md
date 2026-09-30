@@ -91,7 +91,7 @@ velocity_weight, updated_by, updated_at`
 ## API (`/api/studio/*`, POST, auth + CSRF)
 - `POST /api/studio/override` — {story_id, action, ...fields, reason}
 - `POST /api/studio/edit` — {story_id, headline?, dek?, body?, tags?} → sets human_locked
-- `POST /api/studio/reorder` — {pins: [{story_id, rank}]}
+- `POST /api/studio/reorder` — {order: [story_id, …]} (rank = index + 1; replaces the pin set atomically)
 - `POST /api/studio/weights` — {topic_weights, ...}
 - `POST /api/studio/create` — manual story
 - `GET  /api/studio/feed` — the desk view (feed + overrides + statuses)
@@ -110,6 +110,28 @@ Config rows have `story_id = NULL` and carry their target (`source:<uuid>`, `use
 rest. The policy lives in `test/unit/studio/access-matrix.ts`; `studio-role-matrix.test.ts` fails if
 a new Studio route/page/action has no declared role, and `studio-audit-writes.test.ts` fails if a
 declared write has no same-transaction audit scenario.
+
+**F9–F12 (2026-10):**
+- **F9 manual stories** — `PATCH /api/studio/manual/[id]` (editor: edit fields, `status`
+  PUBLISHABLE↔UNPUBLISHED) and `DELETE` (admin: soft delete → `status = 'DELETED'`, row kept). Audit
+  actions `manual_edit` / `manual_unpublish` / `manual_republish` / `manual_delete`. Controls live on the
+  Create page's "Recently created" cards. The reader mappers (`manual-feed.ts`) drop any manual story whose
+  headline is internal prompt/brief text ("Research the impact of …") and blank prompt-like deks/paragraphs
+  (`src/lib/studio/prompt-leak.ts`).
+- **F10 reorder/pin** — `POST /api/studio/reorder` {order: uuid[] ≤ 12} replaces the WHOLE pin set in one
+  transaction (stale pins unpinned, order pinned 1..n; failure rolls everything back). Every pin carries
+  `pinned_until` (12 h, `src/lib/studio/pins.ts`); an expired pin stays Published but stops forcing rank.
+  A single Pin displaces whoever held that rank (audited `unpin`). Migration 008 adds `pinned_until`, cleans
+  legacy duplicate ranks and adds a deferred `one_pin_per_rank` EXCLUDE constraint.
+- **F11 knobs** — `recencyHalflifeH` (true half-life), `sourceWeight`, `velocityWeight` (articles/hour of
+  cluster span) are applied by `src/lib/worldwide/scoring.ts`, clamped to `KNOB_BOUNDS`; the SQL score now
+  only selects the 600-story pool. Manual stories keep their stored 0–100 editor importance; at ranking time
+  it is read as a PERCENTILE of the automated pool (`src/lib/worldwide/manual-importance.ts`: 0 → weakest,
+  100 → ties the strongest, never above; a pin still leads) — previously a raw 40 outranked every
+  generated story (~0.5–3).
+- **F12 sections** — one shared section set + topic map (`src/lib/worldwide/sections.ts`, incl. TECH/SOCIAL).
+  The /curate Sections panel saves order / visibility / band size (1–7) into
+  `ranking_weights.section_layout` (migration 009) with the weights write; `getFrontPage` applies it.
 
 ---
 
