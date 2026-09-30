@@ -17,7 +17,8 @@ function deskState(
   const action: OverrideAction | undefined = override?.action;
   if (action === 'killed') return 'hidden';
   if (isPinActive(override, Date.now())) return 'top';
-  if (action === 'live' || action === 'pinned') return 'live'; // an expired pin stays Published // editor Published — force-surfaced, bypasses machine hold + buffer
+  if (action === 'live') return 'live'; // editor Published — force-surfaced, bypasses machine hold + buffer
+  // An EXPIRED pin forces nothing: it follows the machine exactly like an untouched story (F10).
   if (!/^PUBLISHABLE/i.test(genStatus)) return 'held'; // machine held it → needs the editor's OK
   // Publishable, no editor decision → follow the machine, but honour the hold-and-release buffer:
   // live once past the window, otherwise scheduled (in the buffer — Next Up with a countdown).

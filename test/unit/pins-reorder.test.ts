@@ -32,8 +32,15 @@ const db = vi.hoisted(() => {
   };
 
   function checkOnePinPerRank(rows: Map<string, Row>) {
-    const ranks = [...rows.values()].filter((r) => r.action === 'pinned').map((r) => r.pinned_rank);
-    if (new Set(ranks).size !== ranks.length) throw new Error('violates exclusion constraint one_pin_per_rank');
+    const pinned = [...rows.values()].filter((r) => r.action === 'pinned');
+    const ranks = pinned.map((r) => r.pinned_rank);
+    if (new Set(ranks).size !== ranks.length) {
+      throw Object.assign(new Error('violates exclusion constraint one_pin_per_rank'), { code: '23P01' });
+    }
+    // migration 008's CHECKs
+    if (pinned.some((r) => r.pinned_rank === null || r.pinned_until === null)) {
+      throw Object.assign(new Error('violates check constraint'), { code: '23514' });
+    }
   }
 
   const begin = async (cb: (tx: unknown) => Promise<unknown>) => {
@@ -46,8 +53,13 @@ const db = vi.hoisted(() => {
         writes += 1;
         if (state.failOnWrite && writes === state.failOnWrite) return Promise.reject(new Error('connection lost'));
       }
-      if (text.startsWith("SELECT story_id FROM rigwire.editorial_overrides WHERE action = 'pinned' FOR UPDATE")) {
-        return Promise.resolve([...view.values()].filter((r) => r.action === 'pinned').map((r) => ({ story_id: r.story_id })));
+      if (text.startsWith("SELECT story_id, action, pinned_rank FROM rigwire.editorial_overrides WHERE action = 'pinned' OR story_id = ANY(")) {
+        const ids = values[0] as string[];
+        return Promise.resolve(
+          [...view.values()]
+            .filter((r) => r.action === 'pinned' || ids.includes(r.story_id))
+            .map((r) => ({ story_id: r.story_id, action: r.action, pinned_rank: r.pinned_rank })),
+        );
       }
       if (text.includes("WHERE action = 'pinned' AND coalesce(pinned_rank, 1) =")) {
         const [rank, self] = values as [number, string];
@@ -93,9 +105,9 @@ const db = vi.hoisted(() => {
 
 vi.mock('@/lib/db', () => ({ sql: db.sql, sqlAnalytics: db.sql }));
 
-import { pinStory } from '@/lib/studio/overrides';
+import { applyOverride, killStory, pinStory } from '@/lib/studio/overrides';
 import { isPinActive, MAX_REORDER, PIN_TTL_HOURS, planReorder, validateOrder } from '@/lib/studio/pins';
-import { reorderTopStories } from '@/lib/studio/reorder';
+import { pinSetToken, ReorderConflictError, reorderTopStories } from '@/lib/studio/reorder';
 
 const ids = {
   A: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
@@ -107,7 +119,7 @@ const ids = {
 
 function pinnedRow(story_id: string, rank: number) {
   return {
-    story_id, action: 'pinned', pinned_rank: rank, pinned_until: null, importance_delta: 0,
+    story_id, action: 'pinned', pinned_rank: rank as number | null, pinned_until: '2099-01-01T00:00:00Z' as string | null, importance_delta: 0,
     section_override: null, human_locked: false, edited_headline: null, edited_dek: null, edited_body: null,
     edited_tags: null, edited_image: null, editor_id: 'old-editor', reason: null, updated_at: new Date(0).toISOString(),
   };
@@ -214,5 +226,54 @@ describe('F10 single pin keeps one story per rank', () => {
     await boostStory(ids.Z, 'editor@example.org', 5);
     expect(db.state.rows.get(ids.Z)?.pinned_rank).toBe(3);
     expect(db.state.rows.get(ids.Z)?.pinned_until).toBe(until);
+  });
+});
+
+describe('F10 review — stale clients and normalisation', () => {
+  const currentToken = () =>
+    pinSetToken([...db.state.rows.values()].filter((r) => r.action === 'pinned'));
+
+  it('refuses to reorder a killed story (a stale tab must never resurrect it) — nothing written', async () => {
+    await killStory(ids.A, 'editor@example.org');
+    db.state.audit = [];
+    const before = pins();
+    await expect(reorderTopStories([ids.A, ids.X], 'editor@example.org')).rejects.toBeInstanceOf(ReorderConflictError);
+    expect(pins()).toEqual(before);
+    expect(db.state.rows.get(ids.A)?.action).toBe('killed');
+    expect(db.state.audit).toEqual([]);
+  });
+
+  it('refuses when the pin set changed since the client loaded it; accepts a current token', async () => {
+    const loaded = currentToken();
+    await pinStory(ids.Z, 'someone-else@example.org', 3); // another editor pins meanwhile
+    await expect(reorderTopStories([ids.A, ids.X], 'editor@example.org', loaded)).rejects.toBeInstanceOf(
+      ReorderConflictError,
+    );
+    const out = await reorderTopStories([ids.A, ids.X], 'editor@example.org', currentToken());
+    expect(out.pinToken).toBe(currentToken()); // the client's token for its next reorder
+    expect(pins()).toEqual([[ids.A, 1], [ids.X, 2]]);
+  });
+
+  it('a pinned write without a rank (e.g. an undo snapshot) is stored at rank 1 with an expiry', async () => {
+    db.state.rows = new Map();
+    await applyOverride(ids.Z, { action: 'pinned', pinnedRank: null }, 'editor@example.org', 'undo');
+    expect(db.state.rows.get(ids.Z)?.pinned_rank).toBe(1);
+    expect(db.state.rows.get(ids.Z)?.pinned_until).not.toBeNull();
+  });
+
+  it('a duplicate rank at COMMIT raises SQLSTATE 23P01, which the routes treat as a conflict', async () => {
+    // Bypass displacement to force two pins at rank 1 — the deferred constraint rejects the COMMIT.
+    const { writeOverride } = await import('@/lib/studio/overrides');
+    const err = await db.sql
+      .begin((tx) => writeOverride(tx as never, ids.Z, { action: 'pinned', pinnedRank: 1 }, 'e', 'pin', { displace: false }))
+      .catch((e: unknown) => e);
+    const { isWriteConflict } = await import('@/lib/studio/db-errors');
+    expect(isWriteConflict(err)).toBe(true);
+    expect(pins()).toEqual([[ids.X, 1], [ids.Y, 2]]); // rolled back
+    for (const code of ['40P01', '23505', '40001']) {
+      expect(isWriteConflict(Object.assign(new Error('x'), { code }))).toBe(true);
+    }
+    expect(isWriteConflict(Object.assign(new Error('x'), { code: '42P01' }))).toBe(false);
+    expect(isWriteConflict('23P01')).toBe(false);
   });
 });

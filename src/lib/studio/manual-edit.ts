@@ -79,7 +79,7 @@ function merge(r: Row, patch: ManualStoryPatch, status: string): Row {
   };
 }
 
-/** The audit action for a change: a pure status flip is named for the flip; anything else is an edit. */
+/** The audit action for a real change (no-ops never reach here): a pure status flip is named for the flip; anything else is an edit. */
 function actionFor(before: Row, patch: ManualStoryPatch, status: string): string {
   const edited = Object.values(patch).some((v) => v !== undefined);
   if (edited || status === before.status) return 'manual_edit';
@@ -107,6 +107,10 @@ export async function changeManualStory(
     if (before.status === 'DELETED') throw new ManualStoryError('This story was deleted and can no longer be changed', 409);
     const nextStatus = status ?? before.status;
     const after = merge(before, patch, nextStatus);
+    // Nothing actually changes (same status, same field values) → no write, no audit row.
+    if (JSON.stringify(snapshot(after)) === JSON.stringify(snapshot(before))) {
+      return { id, status: before.status, action: 'noop' };
+    }
     await tx`
       UPDATE rigwire.manual_stories
       SET headline = ${after.headline}, dek = ${after.dek}, body = ${after.body}, topic = ${after.topic},

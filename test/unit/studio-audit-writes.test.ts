@@ -96,8 +96,8 @@ const OVERRIDE_SNAPSHOT = {
 function defaultRows(text: string): unknown[] {
   if (text.includes('RETURNING id')) return [{ id: NEW_ID }];
   if (text.includes('FROM rigwire.manual_stories WHERE id =')) return [MANUAL_ROW];
-  if (text.startsWith("SELECT story_id FROM rigwire.editorial_overrides WHERE action = 'pinned' FOR UPDATE")) {
-    return [{ story_id: OLD_PIN_ID }];
+  if (text.startsWith("SELECT story_id, action, pinned_rank FROM rigwire.editorial_overrides WHERE action = 'pinned'")) {
+    return [{ story_id: OLD_PIN_ID, action: 'pinned', pinned_rank: 1 }];
   }
   if (text.includes('FROM auth.users WHERE id =')) return [{ email: 'target@example.org', role: 'editor' }];
   if (text.includes('FROM public.sources WHERE id =')) return [{ domain: 'example.com', political_lean: null }];

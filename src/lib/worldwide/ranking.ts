@@ -13,7 +13,7 @@ import { manualStoryCards } from '@/lib/studio/manual-feed';
 import { getOverrides } from '@/lib/studio/overrides';
 import { getWeights } from '@/lib/studio/weights';
 
-import { rankWithOverrides } from './editorial-rank';
+import { forcedStoryIds, rankWithOverrides } from './editorial-rank';
 import { groupIntoHubs } from './eventhub';
 import { placeManualCards } from './manual-importance';
 import { scoreStory, type ScoringKnobs } from './scoring';
@@ -220,9 +220,8 @@ export async function getFrontPage(scope: string): Promise<FrontPage> {
   const overrides = await getOverrides();
   // Ranking knobs + section layout (Studio → Ranking / Sections). Read once, applied below.
   const weights = await getWeights();
-  const forcedIds = [...overrides.values()]
-    .filter((o) => o.action === 'live' || o.action === 'pinned')
-    .map((o) => o.storyId);
+  // Expired pins are NOT forced (F10 review): they fall back to the machine's gate like any untouched story.
+  const forcedIds = forcedStoryIds(overrides, Date.now());
   const forcedClause = forcedIds.length
     ? sqlAnalytics`OR (sc.story_id = ANY(${forcedIds}) AND length(g.body) >= 400 AND g.body NOT ILIKE '%no facts available%')`
     : sqlAnalytics``;

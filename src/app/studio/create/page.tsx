@@ -5,6 +5,7 @@ import { CmsCard, CmsCardGrid } from '@/components/studio/cms-card';
 import { isDispatchLive, listJobs } from '@/lib/dispatch/client';
 import { listManualStories } from '@/lib/studio/manual';
 import { guardPage } from '@/lib/studio/guard';
+import { promptLeakLevel } from '@/lib/studio/prompt-leak';
 import { countryName } from '@/lib/worldwide/country';
 
 import CreateClient from './create-client';
@@ -13,6 +14,13 @@ import ManualStoryControls from './manual-story-controls';
 import type { JobStatus } from '@/lib/dispatch/types';
 
 export const dynamic = 'force-dynamic';
+
+/** The stronger prompt-leak level of headline and dek — surfaced on the card so editors can fix it. */
+function worstLeak(headline: string, dek: string | null) {
+  const levels = [promptLeakLevel(headline), promptLeakLevel(dek)];
+  if (levels.includes('leak')) return 'leak' as const;
+  return levels.includes('suspect') ? ('suspect' as const) : ('none' as const);
+}
 
 export default async function Page() {
   const editor = await guardPage('editor');
@@ -73,6 +81,7 @@ export default async function Page() {
                   body={s.body}
                   status={s.status}
                   canDelete={editor.isAdmin}
+                  promptFlag={worstLeak(s.headline, s.dek)}
                 />
               </div>
             }

@@ -16,6 +16,18 @@ import type { StoryCard } from './types';
 
 const PIN_BOOST = 10000;
 
+/** An editor decision that force-surfaces a story past the machine's HOLD and publish buffer:
+ *  explicitly Published ('live'), or pinned with the pin still active. An EXPIRED pin forces nothing —
+ *  it behaves exactly like a story the editor never touched (review fix, F10). */
+export function isForceSurfaced(o: EditorialOverride | null | undefined, nowMs: number): boolean {
+  return o?.action === 'live' || isPinActive(o, nowMs);
+}
+
+/** Ids whose override force-surfaces them (see isForceSurfaced). */
+export function forcedStoryIds(overrides: ReadonlyMap<string, EditorialOverride>, nowMs: number): string[] {
+  return [...overrides.values()].filter((o) => isForceSurfaced(o, nowMs)).map((o) => o.storyId);
+}
+
 export function rankWithOverrides(
   pool: ReadonlyArray<StoryCard>,
   overrides: ReadonlyMap<string, EditorialOverride>,

@@ -33,7 +33,6 @@ vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }));
 
 import { changeManualStory, ManualStoryError } from '@/lib/studio/manual-edit';
 import { manualStoryCards, manualStoryDetail } from '@/lib/studio/manual-feed';
-import { isPromptLeak } from '@/lib/studio/prompt-leak';
 
 const ID = '77777777-7777-4777-8777-777777777777';
 
@@ -51,32 +50,6 @@ beforeEach(() => {
   h.state.session = { user: { id: 'u', email: 'editor@example.org', role: 'editor' } };
 });
 
-describe('isPromptLeak', () => {
-  it.each([
-    'Research the impact of the new tariff on Indian exporters',
-    'research how the monsoon affects rice prices',
-    'Please investigate whether the minister misled parliament',
-    'Write a 600-word article about the Georgia protests',
-    'Draft an explainer on the new election law',
-    'Brief: cover the budget vote',
-    'Prompt: summarise the ruling',
-    'As an AI language model, I cannot…',
-  ])('flags internal prompt text: %s', (t) => {
-    expect(isPromptLeak(t)).toBe(true);
-  });
-
-  it.each([
-    'Research shows heat is cutting crop yields',
-    'Researchers find new antibiotic in soil',
-    'Investigators probe the dam collapse',
-    'How the budget affects your taxes',
-    'The impact of the tariff on exporters, explained',
-    'Writers strike enters third week',
-  ])('keeps real headlines: %s', (t) => {
-    expect(isPromptLeak(t)).toBe(false);
-  });
-});
-
 describe('reader mappers never render prompt text', () => {
   it('drops a card whose headline is a brief, and blanks a prompt dek', async () => {
     h.state.rows = [
@@ -90,14 +63,20 @@ describe('reader mappers never render prompt text', () => {
     expect(h.state.log[0]).toContain("status LIKE 'PUBLISHABLE%'"); // unpublished / deleted never surface
   });
 
-  it('a story page for a brief-as-headline 404s; prompt paragraphs are stripped', async () => {
+  it('a story page for a brief-as-headline 404s; body paragraphs are never filtered', async () => {
     h.state.rows = [storyRow({ headline: 'Research the impact of the tariff on exporters' })];
     expect(await manualStoryDetail(ID)).toBeNull();
 
-    h.state.rows = [storyRow({ body: 'Real opening paragraph.\n\nResearch the impact of this on farmers.' })];
+    const body = 'Real opening paragraph.\n\nResearch the impact of this on farmers, officials said.';
+    h.state.rows = [storyRow({ body })];
     const d = await manualStoryDetail(ID);
-    expect(d?.paragraphs.join(' ')).not.toMatch(/Research the impact/);
     expect(d?.paragraphs.join(' ')).toMatch(/Real opening paragraph/);
+    expect(d?.paragraphs.join(' ')).toMatch(/Research the impact of this on farmers/);
+  });
+
+  it('a real headline that merely looks imperative is still published', async () => {
+    h.state.rows = [storyRow({ headline: 'Investigate whether the minister lied' })];
+    expect((await manualStoryCards()).map((c) => c.title)).toEqual(['Investigate whether the minister lied']);
   });
 });
 

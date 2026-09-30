@@ -28,6 +28,9 @@ const ACTIONS = [
   'revert',
   'doorb_publish',
   ...CONFIG_AUDIT_ACTIONS,
+  // one-off legacy pin clean-up by migration 008 (informational; never undoable)
+  'pin_dedupe',
+  'pin_normalise',
 ] as const;
 
 // Actions that read as destructive/reverting — the only ones that earn the accent.

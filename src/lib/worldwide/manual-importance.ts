@@ -18,11 +18,15 @@ import type { StoryCard } from './types';
 export const EDITOR_IMPORTANCE_MAX = 100;
 export const FALLBACK_POOL_RANGE = { min: 0.5, max: 3 } as const;
 
-/** Map an editor 0–100 importance onto the pool scale given the pool's automated importances. */
-export function editorImportanceToPool(value: number, poolImportances: ReadonlyArray<number>): number {
+/** Automated importances, finite only, ascending — computed ONCE per page build. */
+function sortedPool(poolImportances: ReadonlyArray<number>): number[] {
+  return poolImportances.filter(Number.isFinite).slice().sort((a, b) => a - b);
+}
+
+/** Map an editor 0–100 value onto an already-sorted pool (percentile, linear interpolation). */
+function fromSorted(value: number, sorted: ReadonlyArray<number>): number {
   const v = Number.isFinite(value) ? Math.min(EDITOR_IMPORTANCE_MAX, Math.max(0, value)) : 0;
   const q = v / EDITOR_IMPORTANCE_MAX;
-  const sorted = poolImportances.filter(Number.isFinite).slice().sort((a, b) => a - b);
   if (sorted.length === 0) return FALLBACK_POOL_RANGE.min + q * (FALLBACK_POOL_RANGE.max - FALLBACK_POOL_RANGE.min);
   const pos = q * (sorted.length - 1);
   const lo = Math.floor(pos);
@@ -30,11 +34,18 @@ export function editorImportanceToPool(value: number, poolImportances: ReadonlyA
   return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
 }
 
-/** Manual cards with importance re-expressed on the automated pool's scale (new objects). */
+/** Map an editor 0–100 importance onto the pool scale given the pool's automated importances. */
+export function editorImportanceToPool(value: number, poolImportances: ReadonlyArray<number>): number {
+  return fromSorted(value, sortedPool(poolImportances));
+}
+
+/** Manual cards with importance re-expressed on the automated pool's scale (new objects).
+ *  The pool is sorted once for all manual cards. */
 export function placeManualCards(
   manual: ReadonlyArray<StoryCard>,
   automated: ReadonlyArray<StoryCard>,
 ): StoryCard[] {
-  const pool = automated.map((c) => c.importance);
-  return manual.map((c) => ({ ...c, importance: editorImportanceToPool(c.importance, pool) }));
+  if (manual.length === 0) return [];
+  const sorted = sortedPool(automated.map((c) => c.importance));
+  return manual.map((c) => ({ ...c, importance: fromSorted(c.importance, sorted) }));
 }

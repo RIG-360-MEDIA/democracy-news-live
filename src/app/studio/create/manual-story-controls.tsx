@@ -7,6 +7,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import type { PromptLeakLevel } from '@/lib/studio/prompt-leak';
+
 interface ManualStoryControlsProps {
   id: string;
   headline: string;
@@ -14,7 +16,14 @@ interface ManualStoryControlsProps {
   body: string;
   status: string;
   canDelete: boolean;
+  /** Headline/dek reads like an internal prompt: 'leak' is hidden from readers, 'suspect' is not. */
+  promptFlag: PromptLeakLevel;
 }
+
+const PROMPT_FLAG_TEXT: Record<Exclude<PromptLeakLevel, 'none'>, string> = {
+  leak: 'Reads like an internal prompt — hidden from readers until the headline/dek is rewritten.',
+  suspect: 'Reads a bit like an internal prompt — check the headline/dek before it goes out.',
+};
 
 const btn: React.CSSProperties = {
   fontSize: 11,
@@ -51,7 +60,15 @@ async function send(id: string, method: 'PATCH' | 'DELETE', body?: Record<string
   }
 }
 
-export default function ManualStoryControls({ id, headline, dek, body, status, canDelete }: ManualStoryControlsProps) {
+export default function ManualStoryControls({
+  id,
+  headline,
+  dek,
+  body,
+  status,
+  canDelete,
+  promptFlag,
+}: ManualStoryControlsProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -83,6 +100,21 @@ export default function ManualStoryControls({ id, headline, dek, body, status, c
         <span style={{ fontSize: 9, fontWeight: 800, color: '#8a6d1a', background: '#fff4d6', padding: '2px 6px', borderRadius: 4 }}>
           UNPUBLISHED
         </span>
+      )}
+      {promptFlag !== 'none' && (
+        <p
+          role="status"
+          style={{
+            fontSize: 11,
+            margin: '4px 0 0',
+            padding: '3px 6px',
+            borderRadius: 4,
+            color: promptFlag === 'leak' ? '#a8141a' : '#8a6d1a',
+            background: promptFlag === 'leak' ? '#fde2e1' : '#fff4d6',
+          }}
+        >
+          {PROMPT_FLAG_TEXT[promptFlag]}
+        </p>
       )}
       {editing ? (
         <div style={{ marginTop: 6 }}>

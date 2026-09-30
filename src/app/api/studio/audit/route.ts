@@ -10,6 +10,7 @@ import { z } from 'zod';
 
 import { CACHE_TAGS } from '@/lib/cache';
 import { getAuditEntry, isUndoable, listAudit, undoAudit } from '@/lib/studio/audit';
+import { CONFLICT_MESSAGE, isWriteConflict } from '@/lib/studio/db-errors';
 import { guardApi } from '@/lib/studio/guard';
 
 export const runtime = 'nodejs';
@@ -87,6 +88,8 @@ export async function POST(req: Request) {
       error: null,
     });
   } catch (e: unknown) {
+    // Undoing to a pinned snapshot can race a concurrent pin/reorder (one_pin_per_rank, deadlock).
+    if (isWriteConflict(e)) return fail('409', CONFLICT_MESSAGE, 409);
     console.error('[studio/audit] undo failed', { editor: editorId, auditId: parsed.data.id, error: e });
     return fail('500', 'Undo failed', 500);
   }

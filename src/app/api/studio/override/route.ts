@@ -14,6 +14,7 @@ import {
   unpublishStory,
 } from '@/lib/studio/overrides';
 import { projectPlacement } from '@/lib/studio/placement';
+import { CONFLICT_MESSAGE, isWriteConflict } from '@/lib/studio/db-errors';
 import { guardApi } from '@/lib/studio/guard';
 import { overrideSchema, type OverrideInput } from '@/lib/studio/input-schemas';
 
@@ -51,6 +52,8 @@ export async function POST(req: Request) {
     const placement = await projectPlacement(storyId);
     return NextResponse.json({ ok: true, data: { ...data, placement }, error: null });
   } catch (e: unknown) {
+    // A concurrent pin/reorder won the race (one_pin_per_rank, deadlock…) — not a server fault.
+    if (isWriteConflict(e)) return fail('409', CONFLICT_MESSAGE, 409);
     console.error('[studio/override] failed', { editor, storyId, kind, error: e });
     return fail('500', 'Override failed', 500);
   }

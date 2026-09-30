@@ -25,6 +25,8 @@ interface CurateWorkspaceProps {
   /** Admin-only (F8): section prominence writes the feed-wide ranking weights. */
   canManageSections: boolean;
   data: FrontPage;
+  /** Pin-set fingerprint at render time — sent back with a reorder so a stale tab gets a 409. */
+  pinToken: string;
 }
 
 /** Flatten FrontPage.topStories into pinnable cards; a hub collapses to its lead member. */
@@ -36,7 +38,7 @@ function toItems(units: FrontPage['topStories']): CurateItem[] {
   );
 }
 
-export function CurateWorkspace({ editor, canManageSections, data }: CurateWorkspaceProps) {
+export function CurateWorkspace({ editor, canManageSections, data, pinToken }: CurateWorkspaceProps) {
   const [view, setView] = useState<CurateView>('editor');
   const [sectionsOpen, setSectionsOpen] = useState(false);
 
@@ -56,7 +58,7 @@ export function CurateWorkspace({ editor, canManageSections, data }: CurateWorks
         <div className="border-b border-studio-rule bg-studio-paper px-5 py-4">
           <div className="mx-auto flex max-w-6xl flex-col gap-4">
             <HeroSlot current={items[0] ?? null} />
-            <ReorderOverlay items={items} />
+            <ReorderOverlay items={items} pinToken={pinToken} />
           </div>
         </div>
       )}

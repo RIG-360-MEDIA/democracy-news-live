@@ -2,7 +2,8 @@
 // Manual stories live in rigwire.manual_stories (no generator row); they are adapted to the reader's
 // StoryCard / StoryDetail shapes so a Create-page story appears and opens like any other.
 // Only status PUBLISHABLE* rows surface — Unpublished / Deleted manual stories (F9) never reach readers,
-// and a story whose headline is internal prompt text never renders (isPromptLeak, F9).
+// and a story whose headline is a HIGH-confidence internal prompt never renders (isPromptLeak, F9).
+// Body paragraphs are never filtered; lower-confidence matches are only flagged in the Studio.
 
 import { sql } from '@/lib/db';
 
@@ -78,7 +79,7 @@ export async function manualStoryDetail(id: string): Promise<StoryDetail | null>
   const topicLabel = r.topic && r.topic !== 'OTHER' ? r.topic.charAt(0) + r.topic.slice(1).toLowerCase() : 'News';
   const country = r.country && r.country !== 'XX' ? r.country : '';
   const kicker = [topicLabel, country].filter(Boolean).join(' · ');
-  const paragraphs = toParagraphs(r.body).filter((p) => !isPromptLeak(p));
+  const paragraphs = toParagraphs(r.body);
   const words = r.body.split(/\s+/).length;
 
   return {
@@ -92,7 +93,7 @@ export async function manualStoryDetail(id: string): Promise<StoryDetail | null>
     pullQuote: null,
     stats: null,
     coverage: [],
-    paragraphs: paragraphs.length > 0 ? paragraphs : isPromptLeak(r.body) ? [] : [r.body.trim()],
+    paragraphs: paragraphs.length > 0 ? paragraphs : [r.body.trim()],
     tweets: [], // editor-authored manual stories carry no auto-selected tweets
     readTime: `${Math.max(2, Math.round(words / 200))} min read`,
     date: new Date(r.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),

@@ -83,13 +83,15 @@ export type OverridePatch = Partial<Omit<EditorialOverride, 'storyId' | 'editorI
 
 const asSnapshot = (o: EditorialOverride | null): Snapshot | null => o as unknown as Snapshot | null;
 
-/** The pin fields of the merged row: a (re)pin gets a fresh expiry; leaving pinned state clears it;
- *  any other edit of a pinned story (boost, lock, headline…) keeps the existing expiry. */
+/** The pin fields of the merged row. A pinned row ALWAYS has a rank (default 1) and an expiry
+ *  (migration 008's CHECKs): a (re)pin gets a fresh expiry; any other edit of a pinned story (boost,
+ *  lock, headline…) keeps the existing one; leaving pinned state clears it. */
 function pinFields(existing: EditorialOverride | null, patch: OverridePatch, merged: EditorialOverride, nowMs: number) {
   if (merged.action !== 'pinned') return { pinnedUntil: null };
+  const pinnedRank = merged.pinnedRank ?? 1;
   const repinned = patch.action === 'pinned' || patch.pinnedRank !== undefined || existing?.action !== 'pinned';
-  if (patch.pinnedUntil !== undefined) return { pinnedUntil: patch.pinnedUntil };
-  return { pinnedUntil: repinned ? pinExpiry(nowMs) : merged.pinnedUntil };
+  const kept = patch.pinnedUntil !== undefined ? patch.pinnedUntil : repinned ? null : merged.pinnedUntil;
+  return { pinnedRank, pinnedUntil: kept ?? pinExpiry(nowMs) };
 }
 
 interface WriteOptions {

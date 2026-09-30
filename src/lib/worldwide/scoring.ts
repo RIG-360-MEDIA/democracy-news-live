@@ -30,11 +30,13 @@ export interface ScoreInput {
 
 export type ScoringKnobs = Pick<RankingWeights, 'recencyHalflifeH' | 'sourceWeight' | 'velocityWeight'>;
 
-/** The half-life the SQL scorer used before the knob was wired (e-fold of 24h ≈ 16.6h half-life). */
+/** Defaults = today's front page, exactly (migration 009 writes the same values and column defaults):
+ *  - half-life 16.6355h = 24·ln2 — the pre-F11 SQL's 24h e-fold decay, as a true half-life;
+ *  - velocity 0 — the old scorer had no velocity term, so velocity is opt-in. */
 export const DEFAULT_KNOBS: ScoringKnobs = {
-  recencyHalflifeH: 24 * Math.LN2,
+  recencyHalflifeH: 16.6355,
   sourceWeight: 1,
-  velocityWeight: 1,
+  velocityWeight: 0,
 };
 
 export const KNOB_BOUNDS = {
