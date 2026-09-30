@@ -81,7 +81,9 @@ function isDnlPath(pathname: string): boolean {
 
 export const authConfigEdge: NextAuthConfig = {
   trustHost: true,
-  session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 30 },   // 30 days
+  // 7 days (H1): with requireRole re-reading the DB role this is no longer the revocation window
+  // for Studio access, but it bounds how long a stolen cookie stays useful elsewhere.
+  session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 7 },
   pages: {
     signIn: '/signin',
     error:  '/signin',

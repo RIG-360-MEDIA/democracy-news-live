@@ -21,6 +21,8 @@ const rec = vi.hoisted(() => {
     txSeq: 0,
     failAudit: false,
     rows: (_text: string): unknown[] => [],
+    /** Per-statement failure injection (e.g. a unique-violation race). */
+    reject: (_text: string): Error | null => null,
   };
   const exec =
     (tx: number | null) =>
@@ -30,6 +32,8 @@ const rec = vi.hoisted(() => {
       if (state.failAudit && text.includes('INSERT INTO rigwire.editorial_audit')) {
         return Promise.reject(new Error('audit insert failed'));
       }
+      const injected = state.reject(text);
+      if (injected) return Promise.reject(injected);
       return Promise.resolve(state.rows(text));
     };
   const json = (v: unknown) => ({ json: v });
@@ -47,6 +51,10 @@ vi.mock('@/lib/db', () => ({ sql: rec.sql, sqlAnalytics: rec.sql }));
 vi.mock('@/lib/auth', () => ({
   auth: vi.fn(async () => ({ user: { id: 'u-admin', email: 'admin@example.org', role: 'admin' } })),
   signOut: vi.fn(),
+}));
+// H1: requireRole re-reads the role from auth.users; this suite exercises writes, not the guard.
+vi.mock('@/lib/studio/current-user', () => ({
+  loadCurrentUser: vi.fn(async () => ({ id: 'u-admin', email: 'admin@example.org', role: 'admin' })),
 }));
 vi.mock('@/lib/auth/password', () => ({ hashPassword: vi.fn(async () => 'argon2-hash') }));
 vi.mock('next/cache', () => ({ revalidateTag: vi.fn(), revalidatePath: vi.fn() }));
@@ -83,7 +91,10 @@ function defaultRows(text: string): unknown[] {
   if (text.includes('RETURNING id')) return [{ id: NEW_ID }];
   if (text.includes('FROM auth.users WHERE id =')) return [{ email: 'target@example.org', role: 'editor' }];
   if (text.includes('FROM public.sources WHERE id =')) return [{ domain: 'example.com', political_lean: null }];
-  if (text.includes('SELECT before FROM rigwire.editorial_audit')) return [{ before: OVERRIDE_SNAPSHOT }];
+  if (text.includes('count(*)') && text.includes('FROM auth.users')) return [{ n: 1 }];
+  if (text.startsWith('SELECT action, before FROM rigwire.editorial_audit')) {
+    return [{ action: 'kill', before: OVERRIDE_SNAPSHOT }];
+  }
   if (text.startsWith('SELECT id, story_id, editor_id, action, before, after, at FROM rigwire.editorial_audit')) {
     return [{ id: 9, story_id: STORY_ID, editor_id: 'x', action: 'kill', before: OVERRIDE_SNAPSHOT, after: null, at: new Date() }];
   }
@@ -95,6 +106,7 @@ beforeEach(() => {
   rec.state.txSeq = 0;
   rec.state.failAudit = false;
   rec.state.rows = defaultRows;
+  rec.state.reject = () => null;
 });
 
 const isWrite = (text: string) => /^(INSERT|UPDATE|DELETE)\b/i.test(text);
@@ -176,6 +188,12 @@ const SCENARIOS: Record<string, Scenario> = {
     const a = expectAuditedWrite(/^INSERT INTO rigwire\.manual_stories/, 'manual_create');
     expect(a.storyId).toBe(NEW_ID);
     expect(a.before).toBeNull();
+    // L2: the ledger records the body's length + sha256, not the full text.
+    const after = (a.after as { json: Record<string, unknown> }).json;
+    expect(after.body).toBeUndefined();
+    expect(after.bodyLength).toBe('Body text'.length);
+    expect(after.bodySha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(after.headline).toBe('Hand-written');
   },
   'POST /api/studio/draft/[id]/publish': async () => {
     const res = await post('@/app/api/studio/draft/[id]/publish/route', {});
@@ -312,5 +330,132 @@ describe('F7 — guarded no-op writes leave no audit row', () => {
     const res = await post('@/app/api/studio/draft/[id]/publish/route', {});
     expect(res.status).toBe(200);
     expect(rec.state.log.filter((s) => isWrite(s.text))).toEqual([]);
+  });
+});
+
+describe('M1 — the last admin can never be demoted', () => {
+  const OTHER_ADMIN = 'other.admin@example.org';
+  const adminTarget = (remaining: number) => (text: string) => {
+    if (text.includes('FROM auth.users WHERE id =')) return [{ email: OTHER_ADMIN, role: 'admin' }];
+    if (text.includes('count(*)') && text.includes('FROM auth.users')) return [{ n: remaining }];
+    return defaultRows(text);
+  };
+
+  it('refuses a demotion that would leave zero admins: no UPDATE, no audit row', async () => {
+    rec.state.rows = adminTarget(0);
+    const { setRole } = await import('@/lib/studio/users');
+    expect(await setRole(USER_ID, 'editor', ACTOR)).toBe('last_admin');
+    expect(rec.state.log.some((s) => s.text.startsWith('UPDATE auth.users'))).toBe(false);
+    expect(auditStmts()).toEqual([]);
+  });
+
+  it('serialises demotions: the lock is taken in the transaction before the admin count', async () => {
+    rec.state.rows = adminTarget(0);
+    const { setRole } = await import('@/lib/studio/users');
+    await setRole(USER_ID, 'reader', ACTOR);
+    const lock = rec.state.log.find((s) => s.text.includes('pg_advisory_xact_lock'));
+    const count = rec.state.log.find((s) => s.text.includes('count(*)'));
+    expect(lock).toBeDefined();
+    expect(count).toBeDefined();
+    expect(lock!.tx).not.toBeNull();
+    expect(lock!.tx).toBe(count!.tx);
+    expect(rec.state.log.indexOf(lock!)).toBeLessThan(rec.state.log.indexOf(count!));
+  });
+
+  it('allows the demotion when another admin remains', async () => {
+    rec.state.rows = adminTarget(1);
+    const { setRole } = await import('@/lib/studio/users');
+    expect(await setRole(USER_ID, 'editor', ACTOR)).toBe('ok');
+    expectAuditedWrite(/^UPDATE auth\.users SET role/, 'user_role');
+  });
+
+  it('the setRoleAction path refuses too (no audit row)', async () => {
+    rec.state.rows = adminTarget(0);
+    const { setRoleAction } = await import('@/app/studio/admin/users/actions');
+    await setRoleAction(form({ userId: USER_ID, email: OTHER_ADMIN, role: 'editor' }));
+    expect(auditStmts()).toEqual([]);
+  });
+});
+
+describe('M3 — user admin actions never throw and never echo caller input', () => {
+  it('reset link for an unknown user: refused, no token, no audit row', async () => {
+    rec.state.rows = (text) => (text.includes('FROM auth.users WHERE id =') ? [] : defaultRows(text));
+    const { resetLinkAction } = await import('@/app/studio/admin/users/actions');
+    const out = await resetLinkAction(null, form({ userId: USER_ID, email: 'whoever@example.org' }));
+    expect(out?.ok).toBe(false);
+    expect(rec.state.log.some((s) => s.text.includes('INSERT INTO auth.password_reset_tokens'))).toBe(false);
+    expect(auditStmts()).toEqual([]);
+  });
+
+  it('reset link message names the DB email, not the form-supplied one', async () => {
+    const { resetLinkAction } = await import('@/app/studio/admin/users/actions');
+    const out = await resetLinkAction(null, form({ userId: USER_ID, email: '<b>spoofed@evil.example</b>' }));
+    expect(out?.ok).toBe(true);
+    const message = out && out.ok ? out.message : '';
+    expect(message).toContain('target@example.org');
+    expect(message).not.toContain('spoofed');
+  });
+
+  it('reset link: a DB failure becomes a friendly error, not a throw', async () => {
+    rec.state.reject = (text) => (text.includes('password_reset_tokens') ? new Error('connection reset') : null);
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { resetLinkAction } = await import('@/app/studio/admin/users/actions');
+    const out = await resetLinkAction(null, form({ userId: USER_ID }));
+    spy.mockRestore();
+    expect(out).toEqual({ ok: false, error: expect.any(String) });
+    expect(JSON.stringify(out)).not.toContain('connection reset');
+  });
+
+  it('create: a unique-violation race is reported, not thrown', async () => {
+    rec.state.reject = (text) =>
+      text.startsWith('INSERT INTO auth.users')
+        ? Object.assign(new Error('duplicate key value violates unique constraint "users_email_unique_idx"'), {
+            code: '23505',
+          })
+        : null;
+    const { createUserAction } = await import('@/app/studio/admin/users/actions');
+    const out = await createUserAction(null, form({ email: 'race@example.org', role: 'editor' }));
+    expect(out).toEqual({ ok: false, error: 'An account with that email already exists.' });
+  });
+
+  it('create: any other DB failure becomes a friendly error', async () => {
+    rec.state.reject = (text) => (text.startsWith('INSERT INTO auth.users') ? new Error('disk full') : null);
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { createUserAction } = await import('@/app/studio/admin/users/actions');
+    const out = await createUserAction(null, form({ email: 'new2@example.org', role: 'editor' }));
+    spy.mockRestore();
+    expect(out?.ok).toBe(false);
+    expect(JSON.stringify(out)).not.toContain('disk full');
+  });
+});
+
+describe('L3 — history/revert validate input and only revert override rows', () => {
+  it('revert refuses a non-uuid story id without touching the DB', async () => {
+    const { revert } = await import('@/app/studio/story/[id]/actions');
+    const out = await revert("x' OR 1=1 --", 9);
+    expect(out.ok).toBe(false);
+    expect(rec.state.log).toEqual([]);
+  });
+
+  it('revert refuses a non-integer audit id without touching the DB', async () => {
+    const { revert } = await import('@/app/studio/story/[id]/actions');
+    const out = await revert(STORY_ID, 1.5);
+    expect(out.ok).toBe(false);
+    expect(rec.state.log).toEqual([]);
+  });
+
+  it.each(['manual_create', 'doorb_publish', 'user_role'])('revert refuses a %s row (not an override)', async (action) => {
+    rec.state.rows = (text) =>
+      text.startsWith('SELECT action, before FROM rigwire.editorial_audit') ? [{ action, before: null }] : defaultRows(text);
+    const { revert } = await import('@/app/studio/story/[id]/actions');
+    const out = await revert(STORY_ID, 9);
+    expect(out.ok).toBe(false);
+    expect(rec.state.log.filter((s) => isWrite(s.text))).toEqual([]);
+  });
+
+  it('loadHistory rejects a non-uuid story id without touching the DB', async () => {
+    const { loadHistory } = await import('@/app/studio/story/[id]/actions');
+    await expect(loadHistory('not-a-uuid')).rejects.toThrow(/Invalid story id/);
+    expect(rec.state.log).toEqual([]);
   });
 });

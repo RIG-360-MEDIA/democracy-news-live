@@ -22,6 +22,34 @@ export const CONFIG_AUDIT_ACTIONS = [
   'user_reset_link',
 ] as const;
 
+/** Admin-scope configuration actions (M2): shown only to admins in the audit listing. Story-scoped
+ *  rows — overrides, manual_create, doorb_publish — stay visible to every editor. */
+export const ADMIN_SCOPE_AUDIT_ACTIONS: readonly string[] = [
+  'source_lean',
+  'weights_update',
+  'user_create',
+  'user_role',
+  'user_reset_link',
+];
+
+/** Actions written by applyOverride (overrides.ts): their `before` is an override snapshot, so they
+ *  are the only rows a History-tab revert may restore (L3). */
+export const OVERRIDE_AUDIT_ACTIONS: readonly string[] = [
+  'publish',
+  'unpublish',
+  'unpin',
+  'kill',
+  'revive',
+  'pin',
+  'boost',
+  'suppress',
+  'lock',
+  'unlock',
+  'edit',
+  'undo',
+  'revert',
+];
+
 export type Snapshot = Record<string, unknown>;
 
 export interface AuditEntry {

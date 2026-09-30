@@ -48,6 +48,15 @@ vi.mock('@/lib/auth', () => ({
   signIn: vi.fn(h.touch),
   signOut: vi.fn(h.touch),
 }));
+// H1: requireRole re-reads the role from auth.users. Here the DB agrees with the session, so the
+// matrix exercises the policy; the DB-vs-JWT disagreement cases live in studio-session.test.ts. Kept
+// off the `sql` mock so the guard's own lookup never counts as a downstream touch.
+vi.mock('@/lib/studio/current-user', () => ({
+  loadCurrentUser: vi.fn(async (id: string) => {
+    const u = h.state.session?.user;
+    return u && u.id === id ? { id, email: u.email, role: u.role } : null;
+  }),
+}));
 vi.mock('@/lib/auth/password', () => ({ hashPassword: vi.fn(h.touch), verifyPassword: vi.fn(h.touch) }));
 vi.mock('@/lib/db', () => ({ sql: h.makeSql(), sqlAnalytics: h.makeSql(), withUser: vi.fn(h.touch) }));
 vi.mock('next/navigation', () => ({

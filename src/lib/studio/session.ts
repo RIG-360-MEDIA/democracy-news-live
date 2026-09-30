@@ -10,16 +10,23 @@
 //   'admin'  — feed-wide configuration (sources, weights/sections, /studio/admin/*). Admin only.
 //   reader   — never satisfies either; a signed-in reader gets 403 everywhere in the Studio.
 //
+// H1 — the role is the one in auth.users NOW, not the JWT claim: the session only identifies the
+// user (token subject); loadCurrentUser() re-reads the row on every guarded call (memoised per
+// request). A demotion bites on the next request, a deleted account is treated as signed out (401),
+// and a promotion needs no re-login. The edge middleware's JWT role check is only a backstop.
+//
 // The full route → role policy is enforced by test/unit/studio-role-matrix.test.ts, which fails
 // when a new Studio route/page/action is added without a declared role.
 
 import { auth } from '@/lib/auth';
 import { isAdmin, isEditor } from '@/lib/auth/roles';
 
+import { loadCurrentUser } from './current-user';
+
 export type StudioRole = 'editor' | 'admin';
 
 export interface EditorIdentity {
-  /** Stable id used for audit/display — email, falling back to name, then user id. */
+  /** Stable id used for audit/display — the account's current email. */
   id: string;
   role: string;
   isAdmin: boolean;
@@ -33,20 +40,25 @@ function satisfies(required: StudioRole, role: string | null | undefined): boole
   return required === 'admin' ? isAdmin(role) : isEditor(role);
 }
 
-/** Resolve the signed-in user and check they hold `required` (or better). */
+/** The DEV-ONLY local bypass. INERT in production (Vercel sets NODE_ENV=production); pinned by
+ *  test/unit/studio-session.test.ts. NEVER set CMS_DEV_EDITOR in any deployed environment. */
+function devBypassActive(): boolean {
+  return process.env.NODE_ENV !== 'production' && process.env.CMS_DEV_EDITOR === '1';
+}
+
+/** Resolve the signed-in user and check they CURRENTLY hold `required` (or better). */
 export async function requireRole(required: StudioRole): Promise<EditorGuard> {
-  // DEV-ONLY local verification bypass — INERT in production (Vercel sets NODE_ENV=production, so this
-  // branch is dead code there). It exists only so a developer can run the CMS against the box to verify
-  // UI without minting a login credential. NEVER set CMS_DEV_EDITOR in any deployed environment.
-  if (process.env.NODE_ENV !== 'production' && process.env.CMS_DEV_EDITOR === '1') {
+  if (devBypassActive()) {
     return { ok: true, editor: { id: 'dev@local', role: 'admin', isAdmin: true } };
   }
   const session = await auth();
-  const u = session?.user;
-  if (!u) return { ok: false, status: 401 };
-  if (!satisfies(required, u.role)) return { ok: false, status: 403 };
+  const userId = session?.user?.id;
+  if (!userId) return { ok: false, status: 401 };
+  const current = await loadCurrentUser(userId);
+  if (!current) return { ok: false, status: 401 };
+  if (!satisfies(required, current.role)) return { ok: false, status: 403 };
   return {
     ok: true,
-    editor: { id: u.email ?? u.name ?? u.id, role: u.role, isAdmin: isAdmin(u.role) },
+    editor: { id: current.email, role: current.role, isAdmin: isAdmin(current.role) },
   };
 }

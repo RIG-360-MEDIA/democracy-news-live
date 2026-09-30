@@ -12,9 +12,10 @@ export const dynamic = 'force-dynamic';
 const INITIAL_LIMIT = 100;
 
 export default async function AuditPage() {
-  await guardPage('editor');
+  const editor = await guardPage('editor');
 
-  const rows = await listAudit({ limit: INITIAL_LIMIT, offset: 0 });
+  // M2: editors see the newsroom ledger; admin-scope config rows are admin-only.
+  const rows = await listAudit({ limit: INITIAL_LIMIT, offset: 0 }, { isAdmin: editor.isAdmin });
 
   return (
     <ToastProvider>

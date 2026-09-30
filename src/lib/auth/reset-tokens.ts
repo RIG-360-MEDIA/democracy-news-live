@@ -31,11 +31,24 @@ export function passwordProblem(pw: string): string | null {
   return null;
 }
 
+export interface IssuedResetToken {
+  /** The raw token — goes in the link, never stored or audited. */
+  token: string;
+  /** The account's email as stored in auth.users (never a caller-supplied value). */
+  email: string;
+}
+
 /** Create a single-use token for `userId`; any older unused tokens for that user are revoked. The
- *  issuing admin (`actor`) is audited in the same transaction — the fact, never the token. */
-export async function createResetToken(userId: string, actor: string): Promise<string> {
+ *  issuing admin (`actor`) is audited in the same transaction — the fact, never the token. Returns
+ *  null (writing nothing) when the user does not exist; the row is locked FOR SHARE so it can't be
+ *  deleted between the check and the insert (M3). */
+export async function createResetToken(userId: string, actor: string): Promise<IssuedResetToken | null> {
   const raw = generateToken();
-  await sql.begin(async (tx) => {
+  const email = await sql.begin(async (tx) => {
+    const users = await tx<{ email: string }[]>`
+      SELECT email FROM auth.users WHERE id = ${userId} FOR SHARE
+    `;
+    if (users.length === 0) return null;
     await tx`UPDATE auth.password_reset_tokens SET used = TRUE WHERE user_id = ${userId} AND used = FALSE`;
     await tx`
       INSERT INTO auth.password_reset_tokens (token, user_id, expires_at)
@@ -48,8 +61,9 @@ export async function createResetToken(userId: string, actor: string): Promise<s
       before: null,
       after: { validHours: RESET_TTL_HOURS, priorLinksRevoked: true },
     });
-  });
-  return raw;
+    return users[0].email;
+  }) as string | null;
+  return email === null ? null : { token: raw, email };
 }
 
 export type ConsumeResult = { ok: true; email: string } | { ok: false; error: string };

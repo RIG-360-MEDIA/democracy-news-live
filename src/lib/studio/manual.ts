@@ -2,6 +2,8 @@
 // Editors hand-write stories that bypass the generator; they land in
 // rigwire.manual_stories and are injected into the feed alongside generated ones.
 
+import { createHash } from 'node:crypto';
+
 import { sql } from '@/lib/db';
 
 import { writeAudit } from './audit-log';
@@ -57,6 +59,19 @@ function toManualStory(r: ManualStoryRow): ManualStory {
   };
 }
 
+/** The audit `after` for a manual story (L2): every field except the body, which is recorded as its
+ *  length + sha256 — enough to prove what was published without copying the full text into the
+ *  append-only ledger (the story row itself holds the body). */
+function auditSnapshot(fields: ManualStoryInput): Record<string, unknown> {
+  const { body, ...rest } = fields;
+  return {
+    ...rest,
+    bodyLength: body.length,
+    bodySha256: createHash('sha256').update(body, 'utf8').digest('hex'),
+    status: 'PUBLISHABLE',
+  };
+}
+
 /** Insert a hand-authored story and return its new id. The insert and its 'manual_create' audit
  *  row share one transaction. */
 export async function createManualStory(
@@ -81,7 +96,7 @@ export async function createManualStory(
       action: 'manual_create',
       storyId: id,
       before: null,
-      after: { ...fields, status: 'PUBLISHABLE' },
+      after: auditSnapshot(fields),
     });
     return id;
   }) as Promise<string>;
