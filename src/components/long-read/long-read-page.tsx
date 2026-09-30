@@ -16,6 +16,7 @@ import { isWorldScope } from './worldwide-scope-data';
 import { useEditMode } from './edit-mode';
 import { StoryPuck } from './story-puck';
 import { VideoBand } from './video-band';
+import type { Video } from './videos-data';
 
 import type { FrontPage, StoryCard, EventHub } from '@/lib/worldwide/types';
 
@@ -58,7 +59,7 @@ function cardPool(units: Array<StoryCard | EventHub>): CardView[] {
   return out;
 }
 
-export function LongReadPage({ data }: { data: FrontPage }) {
+export function LongReadPage({ data, videos }: { data: FrontPage; videos: readonly Video[] }) {
   // Repair images that failed to load before hydration (their error event was lost) — walk them to a
   // real backup photo, so a publisher hotlink-403 on the initial pick doesn't strand a broken image.
   useImageFallbackRepair();
@@ -177,7 +178,7 @@ export function LongReadPage({ data }: { data: FrontPage }) {
       </section>
 
       {/* ═══════════ VIDEO — Democracy News Live channel, embedded (right after Top Stories) ═══════════ */}
-      <VideoBand />
+      <VideoBand videos={videos} />
 
       {/* ═══════════ MORE TOP STORIES — image / headline-stack / most-read ═══════════ */}
       <section className="px-5 md:px-10 lg:px-16 pt-8 pb-16" style={{ borderTop: `3px solid ${RULE2}` }}>

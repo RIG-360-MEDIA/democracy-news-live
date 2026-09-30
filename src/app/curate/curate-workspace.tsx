@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 
 import { EditModeProvider } from '@/components/long-read/edit-mode';
 import { LongReadPage } from '@/components/long-read/long-read-page';
+import type { Video } from '@/components/long-read/videos-data';
 import HeroSlot from '@/components/studio/curate/hero-slot';
 import ReorderOverlay from '@/components/studio/curate/reorder-overlay';
 import SectionManager from '@/components/studio/curate/section-manager';
@@ -27,6 +28,8 @@ interface CurateWorkspaceProps {
   data: FrontPage;
   /** Pin-set fingerprint at render time — sent back with a reorder so a stale tab gets a 409. */
   pinToken: string;
+  /** Watch rail clips, already recency-filtered on the server (same list readers get). */
+  videos: readonly Video[];
 }
 
 /** Flatten FrontPage.topStories into pinnable cards; a hub collapses to its lead member. */
@@ -38,7 +41,7 @@ function toItems(units: FrontPage['topStories']): CurateItem[] {
   );
 }
 
-export function CurateWorkspace({ editor, canManageSections, data, pinToken }: CurateWorkspaceProps) {
+export function CurateWorkspace({ editor, canManageSections, data, pinToken, videos }: CurateWorkspaceProps) {
   const [view, setView] = useState<CurateView>('editor');
   const [sectionsOpen, setSectionsOpen] = useState(false);
 
@@ -67,10 +70,10 @@ export function CurateWorkspace({ editor, canManageSections, data, pinToken }: C
 
       {editing ? (
         <EditModeProvider>
-          <LongReadPage data={data} />
+          <LongReadPage data={data} videos={videos} />
         </EditModeProvider>
       ) : (
-        <LongReadPage data={data} />
+        <LongReadPage data={data} videos={videos} />
       )}
     </ToastProvider>
   );

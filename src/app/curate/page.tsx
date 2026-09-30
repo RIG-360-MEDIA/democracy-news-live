@@ -5,6 +5,8 @@ import { getFrontPage } from '@/lib/worldwide/ranking';
 import { guardPage } from '@/lib/studio/guard';
 import { getOverrides } from '@/lib/studio/overrides';
 import { pinSetTokenOf } from '@/lib/studio/reorder';
+import { recentVideos } from '@/lib/worldwide/recent-videos';
+import { videos } from '@/components/long-read/videos-data';
 
 import { CurateWorkspace } from './curate-workspace';
 
@@ -19,7 +21,13 @@ export default async function Curate() {
 
   return (
     <div>
-      <CurateWorkspace editor={editor.id} canManageSections={editor.isAdmin} data={data} pinToken={pinToken} />
+      <CurateWorkspace
+        editor={editor.id}
+        canManageSections={editor.isAdmin}
+        data={data}
+        pinToken={pinToken}
+        videos={recentVideos(videos, Date.now())}
+      />
     </div>
   );
 }
