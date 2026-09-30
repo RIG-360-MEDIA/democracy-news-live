@@ -7,6 +7,8 @@
 // Every change reads the row FOR UPDATE and writes its audit row (before/after snapshot) on the SAME
 // transaction as the UPDATE (F7).
 
+import { createHash } from 'node:crypto';
+
 import { sql } from '@/lib/db';
 
 import { writeAudit, type Snapshot } from './audit-log';
@@ -47,11 +49,14 @@ export class ManualStoryError extends Error {
   }
 }
 
+/** Audit snapshot. Like manual_create (L2), the body is recorded as length + sha256, not copied into
+ *  the append-only ledger — enough to prove an edit changed it. */
 function snapshot(r: Row): Snapshot {
   return {
     headline: r.headline,
     dek: r.dek,
-    body: r.body,
+    bodyLength: r.body.length,
+    bodySha256: createHash('sha256').update(r.body, 'utf8').digest('hex'),
     topic: r.topic,
     country: r.country,
     imageUrl: r.image_url,

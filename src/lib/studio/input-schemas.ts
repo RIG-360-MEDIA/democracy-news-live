@@ -5,6 +5,7 @@
 // (zod + constants only) so forms can share the limits.
 import { z } from 'zod';
 
+import { MAX_REORDER } from './pins';
 import { MANUAL_TOPICS, type ManualTopic } from './topics';
 
 export const INPUT_LIMITS = {
@@ -16,7 +17,7 @@ export const INPUT_LIMITS = {
   url: 2_048,
   reason: 500,
   country: 64,
-  maxPinRank: 100,
+  maxPinRank: MAX_REORDER, // a pin forces a Top Stories slot (F10) — ranks beyond it can't be shown
   maxImportanceDelta: 100,
   maxImportance: 100,
 } as const;
@@ -93,3 +94,23 @@ export const createSchema = z.object({
     .transform((v) => v ?? DEFAULT_IMPORTANCE),
 });
 export type CreateInput = z.infer<typeof createSchema>;
+
+/** PATCH /api/studio/manual/[id] (F9): any subset of the editable fields and/or a publish-state flip.
+ *  Deleting is NOT possible here — it is the admin-only DELETE. Unknown keys are rejected. */
+export const manualPatchSchema = z
+  .object({
+    headline: requiredText(INPUT_LIMITS.headline).optional(),
+    body: requiredText(INPUT_LIMITS.body).optional(),
+    dek: optionalText(INPUT_LIMITS.dek).optional(),
+    country: optionalText(INPUT_LIMITS.country).optional(),
+    image_url: imageUrl
+      .nullable()
+      .transform((v) => (v ? v : null))
+      .optional(),
+    topic: z.enum(MANUAL_TOPICS).optional(),
+    importance: z.number().min(0).max(INPUT_LIMITS.maxImportance).optional(),
+    status: z.enum(['PUBLISHABLE', 'UNPUBLISHED']).optional(),
+  })
+  .strict()
+  .refine((v) => Object.values(v).some((f) => f !== undefined), { message: 'Nothing to change' });
+export type ManualPatchInput = z.infer<typeof manualPatchSchema>;

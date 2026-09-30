@@ -45,6 +45,7 @@ export const OVERRIDE_AUDIT_ACTIONS: readonly string[] = [
   'kill',
   'revive',
   'pin',
+  'reorder',
   'boost',
   'suppress',
   'lock',

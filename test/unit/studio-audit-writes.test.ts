@@ -223,6 +223,9 @@ const SCENARIOS: Record<string, Scenario> = {
     expect(a.storyId).toBe(STORY_ID);
     expect((a.before as { json: Record<string, unknown> }).json.headline).toBe('Hand-written');
     expect((a.after as { json: Record<string, unknown> }).json.headline).toBe('Better headline');
+    // L2: the body is fingerprinted, never copied into the ledger.
+    expect(JSON.stringify(a.before)).not.toContain('Body text');
+    expect((a.after as { json: Record<string, unknown> }).json.bodyLength).toBe('Body text'.length);
 
     rec.state.log = [];
     const un = await call('@/app/api/studio/manual/[id]/route', 'PATCH', STORY_ID, { status: 'UNPUBLISHED' });

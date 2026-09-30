@@ -22,6 +22,13 @@ const h = vi.hoisted(() => {
 
 vi.mock('@/lib/db', () => ({ sql: h.sql, sqlAnalytics: h.sql }));
 vi.mock('@/lib/auth', () => ({ auth: vi.fn(async () => h.state.session) }));
+// requireRole re-reads the live role from auth.users (F7/F8 H1) — serve it from the session fixture.
+vi.mock('@/lib/studio/current-user', () => ({
+  loadCurrentUser: vi.fn(async () => {
+    const u = (h.state.session as { user?: { id: string; email: string; role: string } } | null)?.user;
+    return u ? { id: u.id, email: u.email, role: u.role } : null;
+  }),
+}));
 vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }));
 
 import { changeManualStory, ManualStoryError } from '@/lib/studio/manual-edit';

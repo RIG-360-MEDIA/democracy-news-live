@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { CACHE_TAGS } from '@/lib/cache';
 import { guardApi } from '@/lib/studio/guard';
+import { storyIdSchema } from '@/lib/studio/input-schemas';
 import { MAX_REORDER } from '@/lib/studio/pins';
 import { reorderTopStories } from '@/lib/studio/reorder';
 
@@ -12,7 +13,7 @@ export const runtime = 'nodejs';
 
 const bodySchema = z.object({
   order: z
-    .array(z.string().uuid())
+    .array(storyIdSchema)
     .min(1)
     .max(MAX_REORDER)
     .refine((ids) => new Set(ids).size === ids.length, 'order lists a story more than once'),
@@ -35,13 +36,15 @@ export async function POST(req: Request) {
   const parsed = bodySchema.safeParse(raw);
   if (!parsed.success) return fail('400', parsed.error.issues[0]?.message ?? 'Invalid order', 400);
 
+  const editor = guard.editor.id;
   try {
-    const data = await reorderTopStories(parsed.data.order, guard.editor.id);
+    const data = await reorderTopStories(parsed.data.order, editor);
     revalidateTag(CACHE_TAGS.frontPage);
     revalidateTag(CACHE_TAGS.storyDetail);
     return NextResponse.json({ ok: true, data, error: null });
   } catch (e: unknown) {
     // Nothing was written: the whole reorder ran in one transaction and rolled back.
-    return fail('500', e instanceof Error ? e.message : 'Reorder failed', 500);
+    console.error('[studio/reorder] failed', { editor, order: parsed.data.order, error: e });
+    return fail('500', 'Reorder failed — nothing was changed', 500);
   }
 }
