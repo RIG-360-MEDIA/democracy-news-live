@@ -102,12 +102,13 @@ export async function createManualStory(
   }) as Promise<string>;
 }
 
-/** Most recently authored manual stories, newest first. */
+/** Most recently authored manual stories (live and unpublished), newest first. */
 export async function listManualStories(limit = 30): Promise<ManualStory[]> {
   const rows = (await sql`
     SELECT id, headline, dek, body, topic, country, image_url, status,
            importance, editor_id, created_at
     FROM rigwire.manual_stories
+    WHERE status <> 'DELETED' -- soft-deleted rows are kept for the record, not listed (F9)
     ORDER BY created_at DESC
     LIMIT ${limit}
   `) as unknown as ManualStoryRow[];

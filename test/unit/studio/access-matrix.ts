@@ -32,10 +32,16 @@ export const API_ROUTES: Record<string, Partial<Record<Method, RouteRule>>> = {
   '/api/studio/draft/[id]/publish': { POST: { role: 'editor', write: 'audited' } },
   '/api/studio/edit': { POST: { role: 'editor', write: 'audited' } },
   '/api/studio/embeds/search': { GET: { role: 'editor' } },
+  // F9 — edit / unpublish is newsroom work; delete (soft) is admin-only.
+  '/api/studio/manual/[id]': {
+    PATCH: { role: 'editor', write: 'audited' },
+    DELETE: { role: 'admin', write: 'audited' },
+  },
   '/api/studio/generate-cluster': { POST: { role: 'editor', write: 'remote' } },
   '/api/studio/media/cluster': { GET: { role: 'editor' } },
   '/api/studio/media/search': { GET: { role: 'editor' } },
   '/api/studio/override': { POST: { role: 'editor', write: 'audited' } },
+  '/api/studio/reorder': { POST: { role: 'editor', write: 'audited' } },
   '/api/studio/weights': { GET: { role: 'admin' }, POST: { role: 'admin', write: 'audited' } },
 };
 

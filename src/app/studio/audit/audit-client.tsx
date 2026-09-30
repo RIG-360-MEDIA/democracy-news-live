@@ -18,6 +18,7 @@ const ACTIONS = [
   'kill',
   'revive',
   'pin',
+  'reorder',
   'boost',
   'suppress',
   'lock',
@@ -30,7 +31,7 @@ const ACTIONS = [
 ] as const;
 
 // Actions that read as destructive/reverting — the only ones that earn the accent.
-const DESTRUCTIVE = new Set(['kill', 'unpublish', 'suppress', 'lock', 'undo']);
+const DESTRUCTIVE = new Set(['kill', 'unpublish', 'suppress', 'lock', 'undo', 'manual_unpublish', 'manual_delete']);
 
 interface Filters {
   editor: string;

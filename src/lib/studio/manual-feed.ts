@@ -1,10 +1,14 @@
 // Editorial CMS — surface editor-authored manual stories in the reader feed & read path (epic 002).
 // Manual stories live in rigwire.manual_stories (no generator row); they are adapted to the reader's
 // StoryCard / StoryDetail shapes so a Create-page story appears and opens like any other.
+// Only status PUBLISHABLE* rows surface — Unpublished / Deleted manual stories (F9) never reach readers,
+// and a story whose headline is internal prompt text never renders (isPromptLeak, F9).
 
 import { sql } from '@/lib/db';
 
 import { toParagraphs } from '@/lib/worldwide/detail';
+
+import { isPromptLeak, withoutPromptLeak } from './prompt-leak';
 
 import type { StoryDetail } from '@/lib/worldwide/detail';
 import type { StoryCard } from '@/lib/worldwide/types';
@@ -30,10 +34,10 @@ export async function manualStoryCards(): Promise<StoryCard[]> {
     LIMIT 50
   `) as unknown as CardRow[];
   const now = Date.now();
-  return rows.map((r): StoryCard => ({
+  return rows.filter((r) => !isPromptLeak(r.headline)).map((r): StoryCard => ({
     id: r.id,
     title: r.headline,
-    deck: r.dek,
+    deck: withoutPromptLeak(r.dek),
     image: r.image_url,
     hasArticle: true,
     topic: (r.topic || 'OTHER').toUpperCase(),
@@ -69,25 +73,26 @@ export async function manualStoryDetail(id: string): Promise<StoryDetail | null>
   `) as unknown as DetailRow[];
   if (rows.length === 0) return null;
   const r = rows[0];
+  if (isPromptLeak(r.headline)) return null; // a brief, not a story — never render it
 
   const topicLabel = r.topic && r.topic !== 'OTHER' ? r.topic.charAt(0) + r.topic.slice(1).toLowerCase() : 'News';
   const country = r.country && r.country !== 'XX' ? r.country : '';
   const kicker = [topicLabel, country].filter(Boolean).join(' · ');
-  const paragraphs = toParagraphs(r.body);
+  const paragraphs = toParagraphs(r.body).filter((p) => !isPromptLeak(p));
   const words = r.body.split(/\s+/).length;
 
   return {
     id,
     kicker,
     title: r.headline,
-    deck: r.dek,
+    deck: withoutPromptLeak(r.dek),
     image: r.image_url,
     heroImage: null, // editor-authored manual stories use their own uploaded image
     images: [], // manual stories have no member set — just the hero
     pullQuote: null,
     stats: null,
     coverage: [],
-    paragraphs: paragraphs.length > 0 ? paragraphs : [r.body.trim()],
+    paragraphs: paragraphs.length > 0 ? paragraphs : isPromptLeak(r.body) ? [] : [r.body.trim()],
     tweets: [], // editor-authored manual stories carry no auto-selected tweets
     readTime: `${Math.max(2, Math.round(words / 200))} min read`,
     date: new Date(r.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),

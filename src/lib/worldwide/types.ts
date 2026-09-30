@@ -44,6 +44,7 @@ export interface EventHub {
 export interface TopicSection {
   topic: string;
   stories: StoryCard[];
+  maxVisible?: number; // editor-saved band size (featured + list); absent → the page default (7)
 }
 
 /** The whole front page for a given scope. */

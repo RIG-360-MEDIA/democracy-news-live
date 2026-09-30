@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components/studio/ui';
 import EditorShell from '@/components/studio/editor/editor-shell';
 import { getStoryForEdit } from '@/lib/studio/story';
 import { guardPage } from '@/lib/studio/guard';
+import { isPinActive } from '@/lib/studio/pins';
 import { countryName } from '@/lib/worldwide/country';
 
 import { loadHistory, revert } from './actions';
@@ -39,7 +40,8 @@ export default async function StoryEditorPage({ params }: { params: Promise<{ id
   const { generated, override } = story;
   const badges: string[] = [];
   if (override?.action === 'killed') badges.push('KILLED');
-  if (override?.action === 'pinned') badges.push('PINNED');
+  if (isPinActive(override, Date.now())) badges.push('PINNED');
+  else if (override?.action === 'pinned') badges.push('PIN EXPIRED');
   if (override?.humanLocked) badges.push('LOCKED');
   if (override && (override.editedHeadline || override.editedDek || override.editedBody || override.editedImage))
     badges.push('EDITED');

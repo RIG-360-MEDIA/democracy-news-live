@@ -8,6 +8,7 @@ import { guardPage } from '@/lib/studio/guard';
 import { countryName } from '@/lib/worldwide/country';
 
 import CreateClient from './create-client';
+import ManualStoryControls from './manual-story-controls';
 
 import type { JobStatus } from '@/lib/dispatch/types';
 
@@ -59,9 +60,20 @@ export default async function Page() {
             kicker={`${s.topic} · ${countryName(s.country) || s.country || 'XX'} · imp ${s.importance}`}
             headline={s.headline}
             badge={{ label: 'MANUAL', bg: '#e6f0ff', fg: '#1b4b91' }}
+            dim={!s.status.startsWith('PUBLISHABLE')}
             footer={
-              <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: '#999' }}>
-                by {s.editorId} · {new Date(s.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, color: '#999' }}>
+                  by {s.editorId} · {new Date(s.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                </div>
+                <ManualStoryControls
+                  id={s.id}
+                  headline={s.headline}
+                  dek={s.dek}
+                  body={s.body}
+                  status={s.status}
+                  canDelete={editor.isAdmin}
+                />
               </div>
             }
           />

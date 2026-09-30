@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { CACHE_TAGS } from '@/lib/cache';
 import { getWeights, setWeights, type WeightsPatch } from '@/lib/studio/weights';
 import { guardApi } from '@/lib/studio/guard';
+import { KNOB_BOUNDS } from '@/lib/worldwide/scoring';
+import { resolveSectionLayout, sectionLayoutSchema } from '@/lib/worldwide/sections';
 
 export const runtime = 'nodejs';
 
@@ -16,6 +18,14 @@ function fail(code: string, message: string, status: number) {
 function finiteOrNull(v: unknown): number | null {
   if (typeof v !== 'number' || !Number.isFinite(v)) return null;
   return v;
+}
+
+/** A finite number within a knob's bounds (F11 — the scorer clamps too, but reject bad input loudly). */
+function knobOrNull(v: unknown, key: keyof typeof KNOB_BOUNDS): number | null {
+  const n = finiteOrNull(v);
+  if (n === null) return null;
+  const { min, max } = KNOB_BOUNDS[key];
+  return n >= min && n <= max ? n : null;
 }
 
 /** Narrow an unknown jsonb-shaped value into Record<string, number>; reject non-finite. */
@@ -68,19 +78,28 @@ export async function POST(req: Request) {
     patch.countryWeights = m;
   }
   if (body.recencyHalflifeH !== undefined) {
-    const n = finiteOrNull(body.recencyHalflifeH);
-    if (n === null || n <= 0) return fail('400', 'recencyHalflifeH must be a positive number', 400);
+    const n = knobOrNull(body.recencyHalflifeH, 'recencyHalflifeH');
+    const b = KNOB_BOUNDS.recencyHalflifeH;
+    if (n === null) return fail('400', `recencyHalflifeH must be a number from ${b.min} to ${b.max}`, 400);
     patch.recencyHalflifeH = n;
   }
   if (body.sourceWeight !== undefined) {
-    const n = finiteOrNull(body.sourceWeight);
-    if (n === null || n < 0) return fail('400', 'sourceWeight must be a non-negative number', 400);
+    const n = knobOrNull(body.sourceWeight, 'sourceWeight');
+    const b = KNOB_BOUNDS.sourceWeight;
+    if (n === null) return fail('400', `sourceWeight must be a number from ${b.min} to ${b.max}`, 400);
     patch.sourceWeight = n;
   }
   if (body.velocityWeight !== undefined) {
-    const n = finiteOrNull(body.velocityWeight);
-    if (n === null || n < 0) return fail('400', 'velocityWeight must be a non-negative number', 400);
+    const n = knobOrNull(body.velocityWeight, 'velocityWeight');
+    const b = KNOB_BOUNDS.velocityWeight;
+    if (n === null) return fail('400', `velocityWeight must be a number from ${b.min} to ${b.max}`, 400);
     patch.velocityWeight = n;
+  }
+  if (body.sectionLayout !== undefined) {
+    const parsed = sectionLayoutSchema.safeParse(body.sectionLayout);
+    if (!parsed.success) return fail('400', 'sectionLayout must list each section once with visible and count (1–7)', 400);
+    // Stored complete: sections the client omitted are appended in default order.
+    patch.sectionLayout = resolveSectionLayout(parsed.data);
   }
 
   if (Object.keys(patch).length === 0) return fail('400', 'No weights to update', 400);

@@ -1,9 +1,17 @@
 // Editorial CMS — ranking weights data access (epic 002, E5).
 // Singleton row rigwire.ranking_weights id=1 holds every knob the reader-side
-// ranking build consumes. Read-merge-write keeps patches immutable; every write is audited in the
-// same transaction (F7).
+// ranking build consumes — topic/country weights, the scoring knobs (F11) and the front-page section
+// layout (F12). Read-merge-write keeps patches immutable; every write is audited in the same
+// transaction (F7).
+//
+// The row is read as to_jsonb(row) so a column added by a later migration (section_layout, 009) is
+// simply absent — not an SQL error — on a database where that migration has not run yet: the reader
+// front page keeps rendering with the default layout.
 
 import { sql } from '@/lib/db';
+
+import { DEFAULT_KNOBS } from '@/lib/worldwide/scoring';
+import { DEFAULT_SECTION_LAYOUT, resolveSectionLayout } from '@/lib/worldwide/sections';
 
 import { writeAudit, type Snapshot } from './audit-log';
 import type { RankingWeights } from './types';
@@ -14,6 +22,7 @@ interface WeightsRow {
   recency_halflife_h: string | number | null;
   source_weight: string | number | null;
   velocity_weight: string | number | null;
+  section_layout?: unknown; // absent until migration 009
   updated_by: string | null;
   updated_at: string | Date;
 }
@@ -33,9 +42,10 @@ function toWeights(r: WeightsRow): RankingWeights {
   return {
     topicWeights: toWeightMap(r.topic_weights),
     countryWeights: toWeightMap(r.country_weights),
-    recencyHalflifeH: Number(r.recency_halflife_h ?? 24),
-    sourceWeight: Number(r.source_weight ?? 1),
-    velocityWeight: Number(r.velocity_weight ?? 1),
+    recencyHalflifeH: Number(r.recency_halflife_h ?? DEFAULT_KNOBS.recencyHalflifeH),
+    sourceWeight: Number(r.source_weight ?? DEFAULT_KNOBS.sourceWeight),
+    velocityWeight: Number(r.velocity_weight ?? DEFAULT_KNOBS.velocityWeight),
+    sectionLayout: resolveSectionLayout(r.section_layout),
     updatedBy: r.updated_by ?? 'system',
     updatedAt: new Date(r.updated_at).toISOString(),
   };
@@ -44,9 +54,8 @@ function toWeights(r: WeightsRow): RankingWeights {
 const DEFAULTS: RankingWeights = {
   topicWeights: {},
   countryWeights: {},
-  recencyHalflifeH: 24,
-  sourceWeight: 1,
-  velocityWeight: 1,
+  ...DEFAULT_KNOBS,
+  sectionLayout: DEFAULT_SECTION_LAYOUT,
   updatedBy: 'system',
   updatedAt: new Date(0).toISOString(),
 };
@@ -54,12 +63,9 @@ const DEFAULTS: RankingWeights = {
 /** The singleton ranking weights (id=1), or system defaults if the row is absent. */
 export async function getWeights(): Promise<RankingWeights> {
   const rows = (await sql`
-    SELECT topic_weights, country_weights, recency_halflife_h,
-           source_weight, velocity_weight, updated_by, updated_at
-    FROM rigwire.ranking_weights
-    WHERE id = 1
-  `) as unknown as WeightsRow[];
-  const row = rows[0];
+    SELECT to_jsonb(w) AS row FROM rigwire.ranking_weights w WHERE id = 1
+  `) as unknown as Array<{ row: WeightsRow }>;
+  const row = rows[0]?.row;
   return row ? toWeights(row) : DEFAULTS;
 }
 
@@ -73,6 +79,7 @@ function snapshot(w: RankingWeights): Snapshot {
     recencyHalflifeH: w.recencyHalflifeH,
     sourceWeight: w.sourceWeight,
     velocityWeight: w.velocityWeight,
+    sectionLayout: w.sectionLayout,
   };
 }
 
@@ -81,11 +88,9 @@ function snapshot(w: RankingWeights): Snapshot {
 export async function setWeights(patch: WeightsPatch, editorId: string): Promise<RankingWeights> {
   return sql.begin(async (tx) => {
     const rows = (await tx`
-      SELECT topic_weights, country_weights, recency_halflife_h,
-             source_weight, velocity_weight, updated_by, updated_at
-      FROM rigwire.ranking_weights WHERE id = 1 FOR UPDATE
-    `) as unknown as WeightsRow[];
-    const existing = rows[0] ? toWeights(rows[0]) : DEFAULTS;
+      SELECT to_jsonb(w) AS row FROM rigwire.ranking_weights w WHERE id = 1 FOR UPDATE
+    `) as unknown as Array<{ row: WeightsRow }>;
+    const existing = rows[0] ? toWeights(rows[0].row) : DEFAULTS;
     const next: RankingWeights = {
       ...existing,
       ...patch,
@@ -108,6 +113,14 @@ export async function setWeights(patch: WeightsPatch, editorId: string): Promise
         recency_halflife_h=EXCLUDED.recency_halflife_h, source_weight=EXCLUDED.source_weight,
         velocity_weight=EXCLUDED.velocity_weight, updated_by=EXCLUDED.updated_by,
         updated_at=now()`;
+    // Only touched when the caller saves a layout, so knob/weight saves keep working on a database
+    // that has not yet run migration 009 (which adds the column).
+    if (patch.sectionLayout !== undefined) {
+      await tx`
+        UPDATE rigwire.ranking_weights
+        SET section_layout = ${tx.json(next.sectionLayout as unknown as Parameters<typeof tx.json>[0])}
+        WHERE id = 1`;
+    }
     await writeAudit(tx, {
       actor: editorId,
       action: 'weights_update',

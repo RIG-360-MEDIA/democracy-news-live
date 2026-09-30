@@ -219,7 +219,9 @@ export function LongReadPage({ data }: { data: FrontPage }) {
         const hasRealImage = (c: CardView) => !!c.image && !c.image.includes('/cards/fallback');
         const leadIdx = Math.max(0, cards.findIndex(hasRealImage));
         const featured = cards[leadIdx];
-        const list = cards.filter((_, idx) => idx !== leadIdx).slice(0, 6);
+        // Editor-saved band size (Studio → Sections, F12); default featured + 6.
+        const listMax = section.maxVisible ? Math.max(0, section.maxVisible - 1) : 6;
+        const list = cards.filter((_, idx) => idx !== leadIdx).slice(0, listMax);
         return <ThemedBand key={section.topic} anchor={section.topic.toLowerCase()} title={titleCase(section.topic)} featured={featured} list={list} darker={i % 2 === 1} />;
       })}
 

@@ -80,6 +80,12 @@ vi.mock('@/lib/dispatch/client', () => ({
 const ACTOR = 'admin@example.org';
 const { STORY_ID, USER_ID, SOURCE_ID } = FIXTURE_IDS;
 const NEW_ID = '55555555-5555-4555-8555-555555555555';
+const OLD_PIN_ID = '66666666-6666-4666-8666-666666666666';
+
+const MANUAL_ROW = {
+  id: STORY_ID, headline: 'Hand-written', dek: null, body: 'Body text', topic: 'POLITICS', country: 'IN',
+  image_url: null, importance: 40, status: 'PUBLISHABLE',
+};
 
 const OVERRIDE_SNAPSHOT = {
   storyId: STORY_ID, action: 'live', pinnedRank: null, importanceDelta: 0, sectionOverride: null,
@@ -89,6 +95,10 @@ const OVERRIDE_SNAPSHOT = {
 
 function defaultRows(text: string): unknown[] {
   if (text.includes('RETURNING id')) return [{ id: NEW_ID }];
+  if (text.includes('FROM rigwire.manual_stories WHERE id =')) return [MANUAL_ROW];
+  if (text.startsWith("SELECT story_id FROM rigwire.editorial_overrides WHERE action = 'pinned' FOR UPDATE")) {
+    return [{ story_id: OLD_PIN_ID }];
+  }
   if (text.includes('FROM auth.users WHERE id =')) return [{ email: 'target@example.org', role: 'editor' }];
   if (text.includes('FROM public.sources WHERE id =')) return [{ domain: 'example.com', political_lean: null }];
   if (text.includes('count(*)') && text.includes('FROM auth.users')) return [{ n: 1 }];
@@ -140,6 +150,17 @@ async function post(specifier: string, body: unknown, method = 'POST') {
     body: JSON.stringify(body),
   });
   return mod[method](req, { params: Promise.resolve({ id: 'job-1' }) });
+}
+
+/** Drive a route handler with a specific [id] param (post() above fixes it to 'job-1'). */
+async function call(specifier: string, method: string, id: string, body?: unknown) {
+  const mod = (await import(/* @vite-ignore */ specifier)) as Record<string, (r: Request, c: unknown) => Promise<Response>>;
+  const req = new Request('http://localhost/x', {
+    method,
+    headers: { 'content-type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  return mod[method](req, { params: Promise.resolve({ id }) });
 }
 
 function form(fields: Record<string, string>): FormData {
@@ -194,6 +215,37 @@ const SCENARIOS: Record<string, Scenario> = {
     expect(after.bodyLength).toBe('Body text'.length);
     expect(after.bodySha256).toMatch(/^[0-9a-f]{64}$/);
     expect(after.headline).toBe('Hand-written');
+  },
+  'PATCH /api/studio/manual/[id]': async () => {
+    const res = await call('@/app/api/studio/manual/[id]/route', 'PATCH', STORY_ID, { headline: 'Better headline' });
+    expect(res.status).toBe(200);
+    const a = expectAuditedWrite(/^UPDATE rigwire\.manual_stories/, 'manual_edit');
+    expect(a.storyId).toBe(STORY_ID);
+    expect((a.before as { json: Record<string, unknown> }).json.headline).toBe('Hand-written');
+    expect((a.after as { json: Record<string, unknown> }).json.headline).toBe('Better headline');
+
+    rec.state.log = [];
+    const un = await call('@/app/api/studio/manual/[id]/route', 'PATCH', STORY_ID, { status: 'UNPUBLISHED' });
+    expect(un.status).toBe(200);
+    const u = expectAuditedWrite(/^UPDATE rigwire\.manual_stories/, 'manual_unpublish');
+    expect((u.after as { json: Record<string, unknown> }).json.status).toBe('UNPUBLISHED');
+  },
+  'DELETE /api/studio/manual/[id]': async () => {
+    const res = await call('@/app/api/studio/manual/[id]/route', 'DELETE', STORY_ID);
+    expect(res.status).toBe(200);
+    const a = expectAuditedWrite(/^UPDATE rigwire\.manual_stories/, 'manual_delete');
+    expect((a.after as { json: Record<string, unknown> }).json.status).toBe('DELETED');
+    // Soft delete: the row is kept.
+    expect(rec.state.log.some((s) => /^DELETE/i.test(s.text))).toBe(false);
+  },
+  'POST /api/studio/reorder': async () => {
+    const res = await post('@/app/api/studio/reorder/route', { order: [NEW_ID, STORY_ID] });
+    expect(res.status).toBe(200);
+    expectAuditedWrite(/^INSERT INTO rigwire\.editorial_overrides/, 'unpin');
+    expectAuditedWrite(/^INSERT INTO rigwire\.editorial_overrides/, 'reorder');
+    // Every write of the reorder — the unpin and both pins — ran in ONE transaction.
+    const txs = new Set(rec.state.log.filter((s) => isWrite(s.text)).map((s) => s.tx));
+    expect([...txs]).toEqual([1]);
   },
   'POST /api/studio/draft/[id]/publish': async () => {
     const res = await post('@/app/api/studio/draft/[id]/publish/route', {});
