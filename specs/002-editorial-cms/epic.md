@@ -100,6 +100,17 @@ velocity_weight, updated_by, updated_at`
 Every write also appends to `editorial_audit`. All follow the API-response
 envelope in `.claude/rules/api-conventions.md`.
 
+**F7/F8 (2026-10):** the audit row is written by `writeAudit(tx, …)` (`src/lib/studio/audit-log.ts`)
+inside the SAME `sql.begin` transaction as the write — overrides, manual/Door B stories, weights
+(= section prominence), source leans and user admin (`user_create`, `user_role`, `user_reset_link`).
+Config rows have `story_id = NULL` and carry their target (`source:<uuid>`, `user:<uuid>`,
+`ranking_weights`) inside the before/after snapshots. Roles are enforced by one helper,
+`requireRole('editor'|'admin')` (`src/lib/studio/session.ts`; `guardApi`/`guardPage` adapters in
+`guard.ts`): admin for sources, weights/sections, ranking and `/studio/admin/*`; editor for the
+rest. The policy lives in `test/unit/studio/access-matrix.ts`; `studio-role-matrix.test.ts` fails if
+a new Studio route/page/action has no declared role, and `studio-audit-writes.test.ts` fails if a
+declared write has no same-transaction audit scenario.
+
 ---
 
 ## Build phases
