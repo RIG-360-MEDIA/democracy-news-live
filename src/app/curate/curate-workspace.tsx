@@ -22,6 +22,8 @@ import type { FrontPage } from '@/lib/worldwide/types';
 
 interface CurateWorkspaceProps {
   editor: string;
+  /** Admin-only (F8): section prominence writes the feed-wide ranking weights. */
+  canManageSections: boolean;
   data: FrontPage;
 }
 
@@ -34,7 +36,7 @@ function toItems(units: FrontPage['topStories']): CurateItem[] {
   );
 }
 
-export function CurateWorkspace({ editor, data }: CurateWorkspaceProps) {
+export function CurateWorkspace({ editor, canManageSections, data }: CurateWorkspaceProps) {
   const [view, setView] = useState<CurateView>('editor');
   const [sectionsOpen, setSectionsOpen] = useState(false);
 
@@ -47,7 +49,7 @@ export function CurateWorkspace({ editor, data }: CurateWorkspaceProps) {
         editor={editor}
         view={view}
         onViewChange={setView}
-        onOpenSections={() => setSectionsOpen(true)}
+        onOpenSections={canManageSections ? () => setSectionsOpen(true) : undefined}
       />
 
       {editing && (
@@ -59,7 +61,7 @@ export function CurateWorkspace({ editor, data }: CurateWorkspaceProps) {
         </div>
       )}
 
-      <SectionManager open={sectionsOpen} onClose={() => setSectionsOpen(false)} />
+      {canManageSections && <SectionManager open={sectionsOpen} onClose={() => setSectionsOpen(false)} />}
 
       {editing ? (
         <EditModeProvider>

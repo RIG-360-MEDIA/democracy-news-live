@@ -6,8 +6,8 @@
 // What IS persisted and re-read is topic *prominence* via the ranking weights config
 // (/api/studio/weights → getWeights().topicWeights). So this panel exposes only the
 // lever that actually works — per-section weight — rather than order/count inputs that
-// would silently do nothing. Weights are admin-only (the route enforces it); a
-// non-admin editor gets a toast.
+// would silently do nothing. Weights are admin-only (F8: the route enforces it, and
+// /curate only mounts this panel for admins).
 
 import { useEffect, useState } from 'react';
 

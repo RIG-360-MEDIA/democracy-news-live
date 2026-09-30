@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ToastProvider } from '@/components/studio/ui';
 import EditorShell from '@/components/studio/editor/editor-shell';
 import { getStoryForEdit } from '@/lib/studio/story';
-import { requireEditor } from '@/lib/studio/session';
+import { guardPage } from '@/lib/studio/guard';
 import { countryName } from '@/lib/worldwide/country';
 
 import { loadHistory, revert } from './actions';
@@ -29,8 +29,7 @@ function NotFound({ note }: { note: string }) {
 export default async function StoryEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const guard = await requireEditor();
-  if (!guard.ok) return <NotFound note="Editor access required." />;
+  await guardPage('editor');
 
   const story = await getStoryForEdit(id);
   if (!story) return <NotFound note="Story not found." />;

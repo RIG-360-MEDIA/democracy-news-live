@@ -1,11 +1,10 @@
 // Editorial CMS — Create a story (E6): manual authoring (Door A) plus AI-assisted
 // topic briefs (Door B), with the editor's recent manual stories beneath.
-import { redirect } from 'next/navigation';
 
 import { CmsCard, CmsCardGrid } from '@/components/studio/cms-card';
 import { isDispatchLive, listJobs } from '@/lib/dispatch/client';
 import { listManualStories } from '@/lib/studio/manual';
-import { requireEditor } from '@/lib/studio/session';
+import { guardPage } from '@/lib/studio/guard';
 import { countryName } from '@/lib/worldwide/country';
 
 import CreateClient from './create-client';
@@ -15,8 +14,7 @@ import type { JobStatus } from '@/lib/dispatch/types';
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const guard = await requireEditor();
-  if (!guard.ok) redirect(guard.status === 401 ? '/signin' : '/');
+  const editor = await guardPage('editor');
 
   const recent = await listManualStories(30);
 
@@ -28,7 +26,7 @@ export default async function Page() {
   let jobs: JobStatus[] = [];
   if (doorBEnabled) {
     try {
-      jobs = await listJobs(undefined, guard.editor.id);
+      jobs = await listJobs(undefined, editor.id);
     } catch {
       // The draft desk is optional context here — a box/mock hiccup must not 500
       // the whole Create page. Fall back to an empty tray.

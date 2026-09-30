@@ -1,7 +1,8 @@
-// Editorial CMS — Section fill dashboard (E6). Read-only.
+// Editorial CMS — Section fill dashboard (E6). Read-only; admin-only (F8).
 // Maps each desk story's generator topic onto one of the 10 sections and
 // shows how full each section is against the target of 6 publishable stories.
 import { getDeskFeed } from '@/lib/studio/feed';
+import { guardPage } from '@/lib/studio/guard';
 
 import type { DeskStory } from '@/lib/studio/types';
 
@@ -137,6 +138,7 @@ function SectionRow({ fill }: { fill: SectionFill }) {
 }
 
 export default async function Page() {
+  await guardPage('admin');
   const stories = await getDeskFeed();
   const { fills, unsectioned } = tally(stories);
 

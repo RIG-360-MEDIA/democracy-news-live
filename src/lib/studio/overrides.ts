@@ -1,9 +1,11 @@
 // Editorial CMS — override layer data access (epic 002).
 // Editors never touch story_generated_v8; every decision is an override row here,
-// and every write is logged to editorial_audit. Read-merge-write keeps patches immutable.
+// and every write is logged to editorial_audit in the SAME transaction. Read-merge-write keeps
+// patches immutable.
 
 import { sql } from '@/lib/db';
 
+import { writeAudit, type Snapshot } from './audit-log';
 import type { EditorialOverride, OverrideAction } from './types';
 
 interface OverrideRow {
@@ -73,49 +75,50 @@ export async function getOverrides(storyIds?: string[]): Promise<Map<string, Edi
 
 export type OverridePatch = Partial<Omit<EditorialOverride, 'storyId' | 'editorId' | 'updatedAt'>>;
 
-async function logAudit(
-  storyId: string,
-  editorId: string,
-  action: string,
-  before: EditorialOverride | null,
-  after: EditorialOverride,
-): Promise<void> {
-  await sql`
-    INSERT INTO rigwire.editorial_audit (story_id, editor_id, action, before, after)
-    VALUES (${storyId}, ${editorId}, ${action},
-            ${before ? sql.json(before as unknown as Parameters<typeof sql.json>[0]) : null}, ${sql.json(after as unknown as Parameters<typeof sql.json>[0])})`;
-}
+const asSnapshot = (o: EditorialOverride | null): Snapshot | null => o as unknown as Snapshot | null;
 
-/** Merge a patch onto a story's override (create if absent), persist, and audit. */
+/** Merge a patch onto a story's override (create if absent), persist, and audit — atomically.
+ *  The prior row is read FOR UPDATE inside the transaction so the audit `before` is exact. */
 export async function applyOverride(
   storyId: string,
   patch: OverridePatch,
   editorId: string,
   auditAction: string,
 ): Promise<EditorialOverride> {
-  const existing = (await getOverrides([storyId])).get(storyId) ?? null;
-  const next: EditorialOverride = {
-    ...(existing ?? DEFAULTS(storyId)),
-    ...patch,
-    storyId,
-    editorId,
-    updatedAt: new Date().toISOString(),
-  };
-  await sql`
-    INSERT INTO rigwire.editorial_overrides
-      (story_id, action, pinned_rank, importance_delta, section_override, human_locked,
-       edited_headline, edited_dek, edited_body, edited_tags, edited_image, editor_id, reason, updated_at)
-    VALUES (${next.storyId}, ${next.action}, ${next.pinnedRank}, ${next.importanceDelta},
-       ${next.sectionOverride}, ${next.humanLocked}, ${next.editedHeadline}, ${next.editedDek},
-       ${next.editedBody}, ${next.editedTags}, ${next.editedImage}, ${next.editorId}, ${next.reason}, now())
-    ON CONFLICT (story_id) DO UPDATE SET
-      action=EXCLUDED.action, pinned_rank=EXCLUDED.pinned_rank, importance_delta=EXCLUDED.importance_delta,
-      section_override=EXCLUDED.section_override, human_locked=EXCLUDED.human_locked,
-      edited_headline=EXCLUDED.edited_headline, edited_dek=EXCLUDED.edited_dek,
-      edited_body=EXCLUDED.edited_body, edited_tags=EXCLUDED.edited_tags, edited_image=EXCLUDED.edited_image,
-      editor_id=EXCLUDED.editor_id, reason=EXCLUDED.reason, updated_at=now()`;
-  await logAudit(storyId, editorId, auditAction, existing, next);
-  return next;
+  return sql.begin(async (tx) => {
+    const rows = (await tx`
+      SELECT * FROM rigwire.editorial_overrides WHERE story_id = ${storyId} FOR UPDATE
+    `) as unknown as OverrideRow[];
+    const existing = rows[0] ? toOverride(rows[0]) : null;
+    const next: EditorialOverride = {
+      ...(existing ?? DEFAULTS(storyId)),
+      ...patch,
+      storyId,
+      editorId,
+      updatedAt: new Date().toISOString(),
+    };
+    await tx`
+      INSERT INTO rigwire.editorial_overrides
+        (story_id, action, pinned_rank, importance_delta, section_override, human_locked,
+         edited_headline, edited_dek, edited_body, edited_tags, edited_image, editor_id, reason, updated_at)
+      VALUES (${next.storyId}, ${next.action}, ${next.pinnedRank}, ${next.importanceDelta},
+         ${next.sectionOverride}, ${next.humanLocked}, ${next.editedHeadline}, ${next.editedDek},
+         ${next.editedBody}, ${next.editedTags}, ${next.editedImage}, ${next.editorId}, ${next.reason}, now())
+      ON CONFLICT (story_id) DO UPDATE SET
+        action=EXCLUDED.action, pinned_rank=EXCLUDED.pinned_rank, importance_delta=EXCLUDED.importance_delta,
+        section_override=EXCLUDED.section_override, human_locked=EXCLUDED.human_locked,
+        edited_headline=EXCLUDED.edited_headline, edited_dek=EXCLUDED.edited_dek,
+        edited_body=EXCLUDED.edited_body, edited_tags=EXCLUDED.edited_tags, edited_image=EXCLUDED.edited_image,
+        editor_id=EXCLUDED.editor_id, reason=EXCLUDED.reason, updated_at=now()`;
+    await writeAudit(tx, {
+      actor: editorId,
+      action: auditAction,
+      storyId,
+      before: asSnapshot(existing),
+      after: asSnapshot(next),
+    });
+    return next;
+  }) as Promise<EditorialOverride>;
 }
 
 // ── Named editorial actions (each is reversible) ──

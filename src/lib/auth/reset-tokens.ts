@@ -7,6 +7,7 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import { hashPassword } from '@/lib/auth/password';
 import { sql } from '@/lib/db';
+import { writeAudit } from '@/lib/studio/audit-log';
 
 export const RESET_TTL_HOURS = 72;
 export const MIN_PASSWORD_LENGTH = 10;
@@ -30,8 +31,9 @@ export function passwordProblem(pw: string): string | null {
   return null;
 }
 
-/** Create a single-use token for `userId`; any older unused tokens for that user are revoked. */
-export async function createResetToken(userId: string): Promise<string> {
+/** Create a single-use token for `userId`; any older unused tokens for that user are revoked. The
+ *  issuing admin (`actor`) is audited in the same transaction — the fact, never the token. */
+export async function createResetToken(userId: string, actor: string): Promise<string> {
   const raw = generateToken();
   await sql.begin(async (tx) => {
     await tx`UPDATE auth.password_reset_tokens SET used = TRUE WHERE user_id = ${userId} AND used = FALSE`;
@@ -39,6 +41,13 @@ export async function createResetToken(userId: string): Promise<string> {
       INSERT INTO auth.password_reset_tokens (token, user_id, expires_at)
       VALUES (${hashToken(raw)}, ${userId}, now() + make_interval(hours => ${RESET_TTL_HOURS}))
     `;
+    await writeAudit(tx, {
+      actor,
+      action: 'user_reset_link',
+      target: `user:${userId}`,
+      before: null,
+      after: { validHours: RESET_TTL_HOURS, priorLinksRevoked: true },
+    });
   });
   return raw;
 }

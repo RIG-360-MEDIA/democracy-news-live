@@ -4,6 +4,8 @@
 
 import { sql } from '@/lib/db';
 
+import { writeAudit } from './audit-log';
+
 import { MANUAL_TOPICS } from './topics';
 
 import type { ManualStory } from './types';
@@ -55,24 +57,34 @@ function toManualStory(r: ManualStoryRow): ManualStory {
   };
 }
 
-/** Insert a hand-authored story and return its new id. */
+/** Insert a hand-authored story and return its new id. The insert and its 'manual_create' audit
+ *  row share one transaction. */
 export async function createManualStory(
   fields: ManualStoryInput,
   editorId: string,
 ): Promise<string> {
-  const rows = (await sql`
-    INSERT INTO rigwire.manual_stories
-      (headline, dek, body, topic, country, image_url, importance, editor_id, status)
-    VALUES (${fields.headline}, ${fields.dek}, ${fields.body}, ${fields.topic},
-            ${fields.country}, ${fields.imageUrl}, ${fields.importance}, ${editorId},
-            -- Set explicitly, not left to the column default: manualStoryCards (manual-feed.ts)
-            -- only surfaces rows matching status LIKE 'PUBLISHABLE%', so a changed default would
-            -- silently make every new manual story invisible.
-            'PUBLISHABLE')
-    RETURNING id
-  `) as unknown as Array<{ id: string }>;
-
-  return rows[0].id;
+  return sql.begin(async (tx) => {
+    const rows = (await tx`
+      INSERT INTO rigwire.manual_stories
+        (headline, dek, body, topic, country, image_url, importance, editor_id, status)
+      VALUES (${fields.headline}, ${fields.dek}, ${fields.body}, ${fields.topic},
+              ${fields.country}, ${fields.imageUrl}, ${fields.importance}, ${editorId},
+              -- Set explicitly, not left to the column default: manualStoryCards (manual-feed.ts)
+              -- only surfaces rows matching status LIKE 'PUBLISHABLE%', so a changed default would
+              -- silently make every new manual story invisible.
+              'PUBLISHABLE')
+      RETURNING id
+    `) as unknown as Array<{ id: string }>;
+    const id = rows[0].id;
+    await writeAudit(tx, {
+      actor: editorId,
+      action: 'manual_create',
+      storyId: id,
+      before: null,
+      after: { ...fields, status: 'PUBLISHABLE' },
+    });
+    return id;
+  }) as Promise<string>;
 }
 
 /** Most recently authored manual stories, newest first. */

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cache';
 import { getWeights, setWeights, type WeightsPatch } from '@/lib/studio/weights';
-import { requireAdmin, requireEditor } from '@/lib/studio/session';
+import { guardApi } from '@/lib/studio/guard';
 
 export const runtime = 'nodejs';
 
@@ -31,8 +31,8 @@ function toWeightMapOrNull(v: unknown): Record<string, number> | null {
 }
 
 export async function GET() {
-  const guard = await requireEditor();
-  if (!guard.ok) return fail(String(guard.status), guard.status === 401 ? 'Not authenticated' : 'Editor access required', guard.status);
+  const guard = await guardApi('admin');
+  if (!guard.ok) return guard.response;
 
   try {
     const data = await getWeights();
@@ -44,8 +44,8 @@ export async function GET() {
 
 export async function POST(req: Request) {
   // Ranking weights are feed-wide configuration — admin only.
-  const guard = await requireAdmin();
-  if (!guard.ok) return fail(String(guard.status), guard.status === 401 ? 'Not authenticated' : 'Admin access required', guard.status);
+  const guard = await guardApi('admin');
+  if (!guard.ok) return guard.response;
   const editor = guard.editor.id;
 
   let body: Record<string, unknown>;

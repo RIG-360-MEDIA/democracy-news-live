@@ -10,7 +10,7 @@ import { z } from 'zod';
 
 import { CACHE_TAGS } from '@/lib/cache';
 import { getAuditEntry, isUndoable, listAudit, undoAudit } from '@/lib/studio/audit';
-import { requireEditor } from '@/lib/studio/session';
+import { guardApi } from '@/lib/studio/guard';
 
 export const runtime = 'nodejs';
 
@@ -19,10 +19,6 @@ const MAX_LIMIT = 500;
 
 function fail(code: string, message: string, status: number) {
   return NextResponse.json({ ok: false, data: null, error: { code, message } }, { status });
-}
-
-function guardMessage(status: 401 | 403): string {
-  return status === 401 ? 'Not authenticated' : 'Editor access required';
 }
 
 const filterSchema = z.object({
@@ -36,8 +32,8 @@ const filterSchema = z.object({
 });
 
 export async function GET(req: Request) {
-  const guard = await requireEditor();
-  if (!guard.ok) return fail(String(guard.status), guardMessage(guard.status), guard.status);
+  const guard = await guardApi('editor');
+  if (!guard.ok) return guard.response;
 
   const params = new URL(req.url).searchParams;
   const parsed = filterSchema.safeParse({
@@ -62,8 +58,8 @@ export async function GET(req: Request) {
 const undoSchema = z.object({ id: z.coerce.number().int().positive() });
 
 export async function POST(req: Request) {
-  const guard = await requireEditor();
-  if (!guard.ok) return fail(String(guard.status), guardMessage(guard.status), guard.status);
+  const guard = await guardApi('editor');
+  if (!guard.ok) return guard.response;
   const editorId = guard.editor.id;
 
   let body: unknown;

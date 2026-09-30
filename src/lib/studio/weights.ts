@@ -1,9 +1,11 @@
 // Editorial CMS — ranking weights data access (epic 002, E5).
 // Singleton row rigwire.ranking_weights id=1 holds every knob the reader-side
-// ranking build consumes. Read-merge-write keeps patches immutable.
+// ranking build consumes. Read-merge-write keeps patches immutable; every write is audited in the
+// same transaction (F7).
 
 import { sql } from '@/lib/db';
 
+import { writeAudit, type Snapshot } from './audit-log';
 import type { RankingWeights } from './types';
 
 interface WeightsRow {
@@ -63,30 +65,56 @@ export async function getWeights(): Promise<RankingWeights> {
 
 export type WeightsPatch = Partial<Omit<RankingWeights, 'updatedBy' | 'updatedAt'>>;
 
-/** Merge a patch onto the singleton, persist to id=1, and stamp the editor. */
-export async function setWeights(patch: WeightsPatch, editorId: string): Promise<RankingWeights> {
-  const existing = await getWeights();
-  const next: RankingWeights = {
-    ...existing,
-    ...patch,
-    topicWeights: { ...existing.topicWeights, ...(patch.topicWeights ?? {}) },
-    countryWeights: { ...existing.countryWeights, ...(patch.countryWeights ?? {}) },
-    updatedBy: editorId,
-    updatedAt: new Date().toISOString(),
+/** Audit snapshot: the tunable knobs only (updatedAt/updatedBy live on the audit row itself). */
+function snapshot(w: RankingWeights): Snapshot {
+  return {
+    topicWeights: w.topicWeights,
+    countryWeights: w.countryWeights,
+    recencyHalflifeH: w.recencyHalflifeH,
+    sourceWeight: w.sourceWeight,
+    velocityWeight: w.velocityWeight,
   };
-  await sql`
-    INSERT INTO rigwire.ranking_weights
-      (id, topic_weights, country_weights, recency_halflife_h,
-       source_weight, velocity_weight, updated_by, updated_at)
-    VALUES (1,
-       ${sql.json(next.topicWeights as unknown as Parameters<typeof sql.json>[0])},
-       ${sql.json(next.countryWeights as unknown as Parameters<typeof sql.json>[0])},
-       ${next.recencyHalflifeH}, ${next.sourceWeight}, ${next.velocityWeight},
-       ${next.updatedBy}, now())
-    ON CONFLICT (id) DO UPDATE SET
-      topic_weights=EXCLUDED.topic_weights, country_weights=EXCLUDED.country_weights,
-      recency_halflife_h=EXCLUDED.recency_halflife_h, source_weight=EXCLUDED.source_weight,
-      velocity_weight=EXCLUDED.velocity_weight, updated_by=EXCLUDED.updated_by,
-      updated_at=now()`;
-  return next;
+}
+
+/** Merge a patch onto the singleton, persist to id=1, stamp the editor, and audit — atomically.
+ *  The weights also carry per-section prominence (topicWeights), so this is the section write too. */
+export async function setWeights(patch: WeightsPatch, editorId: string): Promise<RankingWeights> {
+  return sql.begin(async (tx) => {
+    const rows = (await tx`
+      SELECT topic_weights, country_weights, recency_halflife_h,
+             source_weight, velocity_weight, updated_by, updated_at
+      FROM rigwire.ranking_weights WHERE id = 1 FOR UPDATE
+    `) as unknown as WeightsRow[];
+    const existing = rows[0] ? toWeights(rows[0]) : DEFAULTS;
+    const next: RankingWeights = {
+      ...existing,
+      ...patch,
+      topicWeights: { ...existing.topicWeights, ...(patch.topicWeights ?? {}) },
+      countryWeights: { ...existing.countryWeights, ...(patch.countryWeights ?? {}) },
+      updatedBy: editorId,
+      updatedAt: new Date().toISOString(),
+    };
+    await tx`
+      INSERT INTO rigwire.ranking_weights
+        (id, topic_weights, country_weights, recency_halflife_h,
+         source_weight, velocity_weight, updated_by, updated_at)
+      VALUES (1,
+         ${tx.json(next.topicWeights as unknown as Parameters<typeof tx.json>[0])},
+         ${tx.json(next.countryWeights as unknown as Parameters<typeof tx.json>[0])},
+         ${next.recencyHalflifeH}, ${next.sourceWeight}, ${next.velocityWeight},
+         ${next.updatedBy}, now())
+      ON CONFLICT (id) DO UPDATE SET
+        topic_weights=EXCLUDED.topic_weights, country_weights=EXCLUDED.country_weights,
+        recency_halflife_h=EXCLUDED.recency_halflife_h, source_weight=EXCLUDED.source_weight,
+        velocity_weight=EXCLUDED.velocity_weight, updated_by=EXCLUDED.updated_by,
+        updated_at=now()`;
+    await writeAudit(tx, {
+      actor: editorId,
+      action: 'weights_update',
+      target: 'ranking_weights',
+      before: rows[0] ? snapshot(existing) : null,
+      after: snapshot(next),
+    });
+    return next;
+  }) as Promise<RankingWeights>;
 }

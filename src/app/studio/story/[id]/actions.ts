@@ -10,7 +10,7 @@ import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS } from '@/lib/cache';
 import { sql } from '@/lib/db';
 import { applyOverride, type OverridePatch } from '@/lib/studio/overrides';
-import { requireEditor } from '@/lib/studio/session';
+import { requireRole } from '@/lib/studio/session';
 import type { EditorialOverride } from '@/lib/studio/types';
 
 import type { HistoryEntry } from '@/components/studio/editor/types';
@@ -26,7 +26,7 @@ interface AuditRow {
 
 /** This story's audit trail, newest first. Throws if the caller is not an editor. */
 export async function loadHistory(storyId: string): Promise<HistoryEntry[]> {
-  const guard = await requireEditor();
+  const guard = await requireRole('editor');
   if (!guard.ok) throw new Error('Editor access required');
 
   const rows = (await sql`
@@ -84,7 +84,7 @@ export async function revert(
   storyId: string,
   auditId: number,
 ): Promise<{ ok: boolean; message?: string }> {
-  const guard = await requireEditor();
+  const guard = await requireRole('editor');
   if (!guard.ok) return { ok: false, message: 'Editor access required' };
 
   const rows = (await sql`
