@@ -21,6 +21,7 @@ import { applySectionLayout, SECTION_TOPICS, sectionOf } from './sections';
 
 import type { EventHub, FrontPage, StoryCard, TopicSection } from './types';
 import { cleanDeck } from '@/lib/brand';
+import { displayedTimeMs } from './displayed-time';
 
 // Section set + topic→section map live in ./sections (shared with the Studio, F12).
 
@@ -110,10 +111,7 @@ function knobScore(r: ScoredRow, now: number, knobs: ScoringKnobs): number {
 
 function toCard(r: ScoredRow, now: number, knobs: ScoringKnobs): StoryCard {
   const lastSeen = new Date(r.lastSeenAt).getTime();
-  // "Published on our site" = the generation run timestamp (run_id is a unix epoch, seconds).
-  // Guard a missing/garbage run_id by falling back to last-seen so the age is never nonsensical.
-  const pub = Number(r.runId);
-  const publishedMs = pub > 1_000_000_000 && pub < 20_000_000_000 ? pub * 1000 : lastSeen;
+  const publishedMs = displayedTimeMs(lastSeen, r.runId, now);
   return {
     id: r.id,
     title: cleanTitle(r.title),
