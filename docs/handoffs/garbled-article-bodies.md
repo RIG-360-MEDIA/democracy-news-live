@@ -106,3 +106,71 @@ open (checked 2026-10-03). Confirm with the box owner that the generator hasn't 
 1. Place the `rig_hetzner` key in `~/.ssh/`.
 2. Verify the host fingerprint with the box owner before the first connect.
 3. Optionally add a read-only `ANALYTICS_DB_URL` to the clone's `.env.local`.
+
+---
+
+# Second issue — wrong years in generated text (e.g. "November 10, 2023" on a 2026 story)
+
+Investigated 2026-10-03 (IST). Example: `/long-read/dd0ea681-9847-497e-873f-3bab6d0d0047` ("Bricks Thrown at
+Ohio Hindu Temple Sparks Condemnation").
+
+## A. The story, verified
+- **Real event:** bricks thrown at the Shree Swaminarayan Vadtal Dham Hindu Mandir, Richmond Heights, Ohio,
+  around 1:30 PM local time on **Friday 2 October 2026**. Daily Jagran (published Sat 3 Oct 2026, 10:59 AM
+  IST) says "Friday afternoon". The Hindu American Foundation's X post says "today" and is dated 3 Oct
+  2026. ANI's URL is stamped `20261003`. The story's own images sit in `…/202610/` and `…/2026/10/` folders.
+- **DNL page date line:** "3 Oct 2026". Correct: it comes from DNL's timestamps, not the generated text.
+- **DNL deck and first paragraph:** "On **November 10, 2023** …". **Wrong.** The same body mentions "the start
+  of Hindu Heritage Month" (October), contradicting its own date.
+- The site's display is not at fault. The error is in the generated text (`story_generated_v8.deck` / `.body`).
+
+## B. Scope (measured 2026-10-03)
+16 of the 238 live stories have an explicit date in 2025 or earlier in their deck or first three paragraphs.
+The first four rows below were checked by hand against coverage of this week; the rest are candidates, and
+some may be legitimate background references (e.g. Avcılar, 2017).
+
+| Story id | Date in text | Headline |
+|---|---|---|
+| `dd0ea681` | November 10, 2023 | Bricks Thrown at Ohio Hindu Temple Sparks Condemnation (event: 2 Oct 2026) |
+| `af6a8d5f` | September 30, 2023 | Omani Copilot Banned from Flying by Oman After Attack on Flydubai Flight |
+| `73ef9b3f` | June 26, 2024 | Omani Co-Pilot's Radical Past and the Mid-Air Assault on a Tel Aviv-Bound… |
+| `1a3afe8b` | September 30, 2023 | Russia's Winter Strike: 1,000 Weapons Aimed at Ukraine's Energy Grid |
+| `e1cda379` | October 2, 2023 | The Moment the Train Became a Battleground… |
+| `163054fa` | June 28, 2024 | A Heart Stops, a Protest Rises: The 75-Year-Old Who Died in Shivaji Park |
+| `315ba392` | October 28, 2023 | Inner-City Apartment Sells for $975K… |
+| `a8b0d4ca` | November 1, 2023 | The Botched Lethal Injection That Left Christa Pike on a Ventilator |
+| `3e811dd9` | September 23, 2023 | The Weight of a School Kitchen: The Tragic Death of Abdulkerim Demir |
+| `e9ee5100` | October 26, 2023 | The Market's Collapse: How a Liquidity Crisis Sent India's Stock Index… |
+| `395fad28` | October 2, 2024 | The River of Shadows: How ₹65 Crore Vanished in Mumbai's Flood-Proofing… |
+| `b25e28dd` | August 30, 2023 | Detention Extended for Nine Suspects in Filo Jet Shipwreck Investigation |
+| `ca68d1e4` | April 13, 2024 | UAE-Based Man Arrested by NIA in VHP Leader Murder Case |
+| `f9a6e3aa` | September 30, 2020 | Jim Carrey's Third Marriage… |
+| `a1239bcd` | September 30, 2024 | A Fight, A Fall, and a School in Lockdown… |
+| `91003853` | December 16, 2017 | The Long Silence of Avcılar |
+
+## C. Root cause (inferred; box access needed to confirm)
+- In most cases **the day and month are right but the year is 2023 or 2024.** News copy rarely states the
+  year ("on Friday", "on September 30"). When the model writes a full date, it supplies the year it believes
+  is current, which comes from its training data. When there isn't even a day and month ("Friday"), it
+  invents the whole date (the Ohio case).
+- So the prompts almost certainly don't give the model **today's date or each source article's publish
+  date**. This could be the extraction step (which pulls `article_events` / numbers from articles), the
+  generation step (`worldwide_gen_v2.py`), or both.
+- The faithfulness verifier doesn't catch it. If the wrong date is already in the extracted facts, the
+  verifier confirms it as "supported". If not, the verifier has no date to compare against either.
+- To confirm on the box: check whether the extraction and generation prompts include `published_at` or the
+  current date. Then check whether `article_events` / `story_facts_v8` for `dd0ea681` already contain
+  "2023".
+
+## D. Fix (box-side)
+1. **Give the models the date.** Pass every source article's `published_at`, plus "Today is <date>", into
+   the extraction and generation prompts. Instruct them to resolve relative dates ("Friday", "today")
+   against the publish date, and never to write a year that isn't in the source text.
+2. **Add a post-generation check.** Any explicit date in the deck or body that is before the cluster's
+   `first_seen_at` and doesn't appear in any member article's text gets flagged, and the story goes to
+   `HELD`. Run this next to the faithfulness verifier.
+3. **Regenerate** the affected stories once 1 and 2 are in.
+
+There is no safe reader-side fix: hiding stories with old dates would also hide legitimate historical
+references. Interim option: editors can correct the dates in Studio (`/studio/story/[id]`), which sets
+`human_locked` and blocks later regeneration of that story.
